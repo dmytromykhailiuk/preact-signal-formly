@@ -4,7 +4,7 @@ Dynamic, config-driven forms for **Preact** — a [Formly](https://formly.dev/) 
 entirely on [@preact/signals](https://github.com/preactjs/signals) and
 [@dmytromykhailiuk/preact-signal-hook-forms](https://www.npmjs.com/package/@dmytromykhailiuk/preact-signal-hook-forms/).
 
-> **Full documentation:** open [Docs](https://github.com/dmytromykhailiuk/preact-signal-formly/blob/main/index.html) in a browser — every option, with
+> **Full documentation:** open [Docs](https://dmytromykhailiuk.github.io/preact-signal-formly/) in a browser — every option, with
 > examples, a table of contents and cross-links. This README is the short form.
 
 **Signal-first, zero re-render.** Field components mount once; every update — values, dynamic
