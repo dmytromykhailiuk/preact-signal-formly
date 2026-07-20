@@ -1,0 +1,147 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 2rem;
+  background: #f6f7f9;
+  color: #1c2430;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 480px) 1fr;
+  gap: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+h1 {
+  grid-column: 1 / -1;
+  font-size: 1.4rem;
+}
+
+form {
+  background: #fff;
+  border: 1px solid #dde2e8;
+  border-radius: 10px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.formly-field,
+.playground-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #c6cdd6;
+  border-radius: 6px;
+}
+
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: #d33;
+}
+
+.formly-error {
+  color: #c0392b;
+  font-size: 0.8rem;
+}
+
+.formly-description {
+  color: #67707c;
+  font-size: 0.8rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.row > * {
+  flex: 1;
+}
+
+.phones-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.phones-item .formly-field {
+  flex: 1;
+}
+
+button {
+  font: inherit;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #c6cdd6;
+  background: #fff;
+  cursor: pointer;
+}
+
+button.primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.rating {
+  display: flex;
+  gap: 0.2rem;
+  font-size: 1.3rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rating .star.active {
+  color: #f59e0b;
+}
+
+.rating .star {
+  color: #cbd5e1;
+}
+
+.inspector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inspector pre {
+  background: #101418;
+  color: #d7e0ea;
+  padding: 1rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  overflow: auto;
+  margin: 0;
+}
+
+.inspector h3 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}

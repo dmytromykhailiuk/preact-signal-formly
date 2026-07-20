@@ -1,0 +1,86 @@
+{
+  "name": "@dmytromykhailiuk/preact-signal-formly",
+  "version": "0.1.0",
+  "description": "Dynamic, config-driven forms for Preact — a Formly analogue built entirely on @preact/signals and preact-signal-hook-forms. Signal-first, zero re-render.",
+  "type": "module",
+  "sideEffects": false,
+  "author": "Dmytro Mykhailiuk <dimamykhayluk@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "preact",
+    "preact-signals",
+    "signals",
+    "forms",
+    "form",
+    "formly",
+    "dynamic-forms",
+    "json-forms",
+    "form-builder",
+    "form-validation",
+    "validation",
+    "field-array",
+    "reactive",
+    "zero-rerender",
+    "typescript",
+    "typed"
+  ],
+  "files": ["dist", "README.md"],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "playground": "vite --config vite.playground.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "@dmytromykhailiuk/preact-signal-hook-forms": ">=0.1.0",
+    "@preact/signals": "^2.0.0",
+    "preact": ">=10.25.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@dmytromykhailiuk/preact-signal-hook-forms": "file:../preact-signal-hook-forms",
+    "@preact/preset-vite": "^2.10.1",
+    "@preact/signals": "^2.0.1",
+    "@testing-library/preact": "^3.2.4",
+    "@types/node": "^22.10.5",
+    "jsdom": "^25.0.1",
+    "preact": "^10.25.4",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dmytromykhailiuk/preact-signal-formly"
+  },
+  "bugs": {
+    "url": "https://github.com/dmytromykhailiuk/preact-signal-formly/issues"
+  },
+  "homepage": "https://github.com/dmytromykhailiuk/preact-signal-formly#readme"
+}
