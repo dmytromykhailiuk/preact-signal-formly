@@ -1,285 +1,847 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>preact-signal-formly — documentation</title>
-<meta name="description" content="Dynamic, config-driven forms for Preact. Signal-first, zero re-render. Complete API reference." />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%235B4BD6'/%3E%3Cpath d='M6 21c4 0 4-10 8-10s4 10 8 10 4-10 4-10' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
-<style>
-/* ── tokens ──────────────────────────────────────────────────────── */
-:root {
-  --ground:#FBFBFD; --surface:#FFFFFF; --surface-2:#F3F4F8; --code-bg:#F7F7FB;
-  --ink:#14161C; --ink-2:#3A3F4C; --muted:#6B7181; --line:#E3E5EC; --line-2:#EDEFF4;
-  --accent:#5B4BD6; --accent-2:#4436B8; --accent-soft:#EFECFD;
-  --wire:#0E7C7B; --warn:#8A5200; --warn-soft:#FCF3E5; --warn-line:#E8CDA0;
-  --danger:#B42318; --danger-soft:#FDF1F0; --danger-line:#F0C8C4;
-  --tok-str:#0E7C7B; --tok-kw:#7A3EA8; --tok-com:#8A90A0; --tok-num:#A34A00; --tok-key:#2B5FCF;
-  --shadow:0 1px 2px rgba(20,22,28,.05), 0 8px 24px -12px rgba(20,22,28,.14);
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ground:#0E1014; --surface:#14171D; --surface-2:#191D25; --code-bg:#12151B;
-    --ink:#E9EBF1; --ink-2:#C3C9D6; --muted:#8B93A6; --line:#262B35; --line-2:#1E222B;
-    --accent:#A99BFF; --accent-2:#C3B8FF; --accent-soft:#1E1B33;
-    --wire:#4FD1C5; --warn:#E2A85C; --warn-soft:#241C10; --warn-line:#4A3A1E;
-    --danger:#FF9086; --danger-soft:#251413; --danger-line:#4C2622;
-    --tok-str:#5FD3C6; --tok-kw:#C79BF0; --tok-com:#6E7688; --tok-num:#E0A162; --tok-key:#8AB4FF;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
-  }
-}
-:root[data-theme="dark"] {
-  --ground:#0E1014; --surface:#14171D; --surface-2:#191D25; --code-bg:#12151B;
-  --ink:#E9EBF1; --ink-2:#C3C9D6; --muted:#8B93A6; --line:#262B35; --line-2:#1E222B;
-  --accent:#A99BFF; --accent-2:#C3B8FF; --accent-soft:#1E1B33;
-  --wire:#4FD1C5; --warn:#E2A85C; --warn-soft:#241C10; --warn-line:#4A3A1E;
-  --danger:#FF9086; --danger-soft:#251413; --danger-line:#4C2622;
-  --tok-str:#5FD3C6; --tok-kw:#C79BF0; --tok-com:#6E7688; --tok-num:#E0A162; --tok-key:#8AB4FF;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
-}
-:root[data-theme="light"] {
-  --ground:#FBFBFD; --surface:#FFFFFF; --surface-2:#F3F4F8; --code-bg:#F7F7FB;
-  --ink:#14161C; --ink-2:#3A3F4C; --muted:#6B7181; --line:#E3E5EC; --line-2:#EDEFF4;
-  --accent:#5B4BD6; --accent-2:#4436B8; --accent-soft:#EFECFD;
-  --wire:#0E7C7B; --warn:#8A5200; --warn-soft:#FCF3E5; --warn-line:#E8CDA0;
-  --danger:#B42318; --danger-soft:#FDF1F0; --danger-line:#F0C8C4;
-  --tok-str:#0E7C7B; --tok-kw:#7A3EA8; --tok-com:#8A90A0; --tok-num:#A34A00; --tok-key:#2B5FCF;
-  --shadow:0 1px 2px rgba(20,22,28,.05), 0 8px 24px -12px rgba(20,22,28,.14);
-}
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>preact-signal-formly — documentation</title>
+    <meta
+      name="description"
+      content="Dynamic, config-driven forms for Preact. Signal-first, zero re-render. Complete API reference."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%235B4BD6'/%3E%3Cpath d='M6 21c4 0 4-10 8-10s4 10 8 10 4-10 4-10' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <style>
+      /* ── tokens ──────────────────────────────────────────────────────── */
+      :root {
+        --ground: #fbfbfd;
+        --surface: #ffffff;
+        --surface-2: #f3f4f8;
+        --code-bg: #f7f7fb;
+        --ink: #14161c;
+        --ink-2: #3a3f4c;
+        --muted: #6b7181;
+        --line: #e3e5ec;
+        --line-2: #edeff4;
+        --accent: #5b4bd6;
+        --accent-2: #4436b8;
+        --accent-soft: #efecfd;
+        --wire: #0e7c7b;
+        --warn: #8a5200;
+        --warn-soft: #fcf3e5;
+        --warn-line: #e8cda0;
+        --danger: #b42318;
+        --danger-soft: #fdf1f0;
+        --danger-line: #f0c8c4;
+        --tok-str: #0e7c7b;
+        --tok-kw: #7a3ea8;
+        --tok-com: #8a90a0;
+        --tok-num: #a34a00;
+        --tok-key: #2b5fcf;
+        --shadow: 0 1px 2px rgba(20, 22, 28, 0.05),
+          0 8px 24px -12px rgba(20, 22, 28, 0.14);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ground: #0e1014;
+          --surface: #14171d;
+          --surface-2: #191d25;
+          --code-bg: #12151b;
+          --ink: #e9ebf1;
+          --ink-2: #c3c9d6;
+          --muted: #8b93a6;
+          --line: #262b35;
+          --line-2: #1e222b;
+          --accent: #a99bff;
+          --accent-2: #c3b8ff;
+          --accent-soft: #1e1b33;
+          --wire: #4fd1c5;
+          --warn: #e2a85c;
+          --warn-soft: #241c10;
+          --warn-line: #4a3a1e;
+          --danger: #ff9086;
+          --danger-soft: #251413;
+          --danger-line: #4c2622;
+          --tok-str: #5fd3c6;
+          --tok-kw: #c79bf0;
+          --tok-com: #6e7688;
+          --tok-num: #e0a162;
+          --tok-key: #8ab4ff;
+          --shadow: 0 1px 2px rgba(0, 0, 0, 0.4),
+            0 8px 24px -12px rgba(0, 0, 0, 0.6);
+        }
+      }
+      :root[data-theme="dark"] {
+        --ground: #0e1014;
+        --surface: #14171d;
+        --surface-2: #191d25;
+        --code-bg: #12151b;
+        --ink: #e9ebf1;
+        --ink-2: #c3c9d6;
+        --muted: #8b93a6;
+        --line: #262b35;
+        --line-2: #1e222b;
+        --accent: #a99bff;
+        --accent-2: #c3b8ff;
+        --accent-soft: #1e1b33;
+        --wire: #4fd1c5;
+        --warn: #e2a85c;
+        --warn-soft: #241c10;
+        --warn-line: #4a3a1e;
+        --danger: #ff9086;
+        --danger-soft: #251413;
+        --danger-line: #4c2622;
+        --tok-str: #5fd3c6;
+        --tok-kw: #c79bf0;
+        --tok-com: #6e7688;
+        --tok-num: #e0a162;
+        --tok-key: #8ab4ff;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.4),
+          0 8px 24px -12px rgba(0, 0, 0, 0.6);
+      }
+      :root[data-theme="light"] {
+        --ground: #fbfbfd;
+        --surface: #ffffff;
+        --surface-2: #f3f4f8;
+        --code-bg: #f7f7fb;
+        --ink: #14161c;
+        --ink-2: #3a3f4c;
+        --muted: #6b7181;
+        --line: #e3e5ec;
+        --line-2: #edeff4;
+        --accent: #5b4bd6;
+        --accent-2: #4436b8;
+        --accent-soft: #efecfd;
+        --wire: #0e7c7b;
+        --warn: #8a5200;
+        --warn-soft: #fcf3e5;
+        --warn-line: #e8cda0;
+        --danger: #b42318;
+        --danger-soft: #fdf1f0;
+        --danger-line: #f0c8c4;
+        --tok-str: #0e7c7b;
+        --tok-kw: #7a3ea8;
+        --tok-com: #8a90a0;
+        --tok-num: #a34a00;
+        --tok-key: #2b5fcf;
+        --shadow: 0 1px 2px rgba(20, 22, 28, 0.05),
+          0 8px 24px -12px rgba(20, 22, 28, 0.14);
+      }
 
-/* ── base ────────────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 1.5rem; }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-}
-body {
-  margin: 0;
-  background: var(--ground);
-  color: var(--ink);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-}
+      /* ── base ────────────────────────────────────────────────────────── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+        scroll-behavior: smooth;
+        scroll-padding-top: 1.5rem;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--ground);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
 
-/* ── shell ───────────────────────────────────────────────────────── */
-.shell { display: grid; grid-template-columns: 17rem minmax(0, 1fr); gap: 3.5rem; max-width: 78rem; margin: 0 auto; padding: 0 1.75rem; }
-@media (max-width: 62rem) { .shell { grid-template-columns: minmax(0, 1fr); gap: 0; } }
+      /* ── shell ───────────────────────────────────────────────────────── */
+      .shell {
+        display: grid;
+        grid-template-columns: 17rem minmax(0, 1fr);
+        gap: 3.5rem;
+        max-width: 78rem;
+        margin: 0 auto;
+        padding: 0 1.75rem;
+      }
+      @media (max-width: 62rem) {
+        .shell {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 0;
+        }
+      }
 
-/* ── sidebar ─────────────────────────────────────────────────────── */
-.rail { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.25rem 0 3rem; }
-@media (max-width: 62rem) { .rail { position: static; max-height: none; overflow: visible; padding-bottom: 0; } }
-.brand { display: flex; align-items: baseline; gap: .5rem; margin-bottom: .35rem; }
-.brand-mark { font: 600 .95rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--accent); letter-spacing: -.01em; }
-.brand-ver { font: 500 .7rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--muted); padding: .15rem .35rem; border: 1px solid var(--line); border-radius: .3rem; }
-.brand-sub { margin: 0 0 1.5rem; font-size: .82rem; color: var(--muted); line-height: 1.5; }
-.toc-title { font: 600 .68rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 .7rem; }
-nav.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .05rem; }
-nav.toc > ol > li > a { font-weight: 550; }
-nav.toc a { display: block; padding: .27rem .6rem; border-left: 2px solid var(--line-2); color: var(--ink-2); text-decoration: none; font-size: .855rem; line-height: 1.35; transition: color .12s, border-color .12s, background .12s; }
-nav.toc a:hover { color: var(--accent); background: var(--accent-soft); border-left-color: var(--accent); }
-nav.toc a.is-active { color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
-nav.toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: .2rem; }
-nav.toc ol ol a { padding-left: 1.35rem; font-size: .81rem; color: var(--muted); }
-.rail-foot { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: .5rem; }
-.theme-toggle { font: 500 .78rem/1 system-ui, sans-serif; color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); border-radius: .45rem; padding: .42rem .7rem; cursor: pointer; text-align: left; }
-.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
-.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      /* ── sidebar ─────────────────────────────────────────────────────── */
+      .rail {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        max-height: 100vh;
+        overflow-y: auto;
+        padding: 2.25rem 0 3rem;
+      }
+      @media (max-width: 62rem) {
+        .rail {
+          position: static;
+          max-height: none;
+          overflow: visible;
+          padding-bottom: 0;
+        }
+      }
+      .brand {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin-bottom: 0.35rem;
+      }
+      .brand-mark {
+        font: 600 0.95rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        color: var(--accent);
+        letter-spacing: -0.01em;
+      }
+      .brand-ver {
+        font: 500 0.7rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        color: var(--muted);
+        padding: 0.15rem 0.35rem;
+        border: 1px solid var(--line);
+        border-radius: 0.3rem;
+      }
+      .brand-sub {
+        margin: 0 0 1.5rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .toc-title {
+        font: 600 0.68rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin: 0 0 0.7rem;
+      }
+      nav.toc ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.05rem;
+      }
+      nav.toc > ol > li > a {
+        font-weight: 550;
+      }
+      nav.toc a {
+        display: block;
+        padding: 0.27rem 0.6rem;
+        border-left: 2px solid var(--line-2);
+        color: var(--ink-2);
+        text-decoration: none;
+        font-size: 0.855rem;
+        line-height: 1.35;
+        transition: color 0.12s, border-color 0.12s, background 0.12s;
+      }
+      nav.toc a:hover {
+        color: var(--accent);
+        background: var(--accent-soft);
+        border-left-color: var(--accent);
+      }
+      nav.toc a.is-active {
+        color: var(--accent);
+        border-left-color: var(--accent);
+        font-weight: 600;
+      }
+      nav.toc a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+        border-radius: 0.2rem;
+      }
+      nav.toc ol ol a {
+        padding-left: 1.35rem;
+        font-size: 0.81rem;
+        color: var(--muted);
+      }
+      .rail-foot {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .theme-toggle {
+        font: 500 0.78rem/1 system-ui, sans-serif;
+        color: var(--ink-2);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 0.45rem;
+        padding: 0.42rem 0.7rem;
+        cursor: pointer;
+        text-align: left;
+      }
+      .theme-toggle:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .theme-toggle:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
 
-/* mobile TOC: a plain container on desktop, a collapsible panel below 62rem */
-@media (max-width: 62rem) {
-  .toc-shell { border: 1px solid var(--line); border-radius: .6rem; background: var(--surface); padding: .35rem .8rem; margin-bottom: 1.5rem; }
-  .toc-shell > summary { cursor: pointer; font: 600 .8rem/2.2 system-ui, sans-serif; color: var(--ink-2); }
-  .toc-shell[open] > summary { border-bottom: 1px solid var(--line-2); margin-bottom: .5rem; }
-  .toc-shell > summary::marker { color: var(--accent); }
-  .toc-shell .toc-title { display: none; } /* the summary already says "Contents" */
-}
-@media (min-width: 62.001rem) { .toc-shell > summary { display: none; } }
+      /* mobile TOC: a plain container on desktop, a collapsible panel below 62rem */
+      @media (max-width: 62rem) {
+        .toc-shell {
+          border: 1px solid var(--line);
+          border-radius: 0.6rem;
+          background: var(--surface);
+          padding: 0.35rem 0.8rem;
+          margin-bottom: 1.5rem;
+        }
+        .toc-shell > summary {
+          cursor: pointer;
+          font: 600 0.8rem/2.2 system-ui, sans-serif;
+          color: var(--ink-2);
+        }
+        .toc-shell[open] > summary {
+          border-bottom: 1px solid var(--line-2);
+          margin-bottom: 0.5rem;
+        }
+        .toc-shell > summary::marker {
+          color: var(--accent);
+        }
+        .toc-shell .toc-title {
+          display: none;
+        } /* the summary already says "Contents" */
+      }
+      @media (min-width: 62.001rem) {
+        .toc-shell > summary {
+          display: none;
+        }
+      }
 
-/* ── content ─────────────────────────────────────────────────────── */
-main { padding: 2.25rem 0 6rem; min-width: 0; }
-.lede { border-bottom: 1px solid var(--line); padding-bottom: 2.25rem; margin-bottom: 2.5rem; }
-h1 { font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif; font-size: clamp(2.1rem, 1.4rem + 2.6vw, 3.1rem); line-height: 1.06; letter-spacing: -.022em; font-weight: 600; margin: 0 0 .7rem; text-wrap: balance; }
-.lede p { font-size: 1.08rem; color: var(--ink-2); margin: 0 0 1rem; max-width: 62ch; }
-.lede p:last-child { margin-bottom: 0; }
-.pitch { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1.25rem; }
-.pitch span { font: 500 .74rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--wire); background: var(--surface-2); border: 1px solid var(--line); border-radius: 2rem; padding: .38rem .7rem; }
+      /* ── content ─────────────────────────────────────────────────────── */
+      main {
+        padding: 2.25rem 0 6rem;
+        min-width: 0;
+      }
+      .lede {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 2.25rem;
+        margin-bottom: 2.5rem;
+      }
+      h1 {
+        font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype",
+          Palatino, serif;
+        font-size: clamp(2.1rem, 1.4rem + 2.6vw, 3.1rem);
+        line-height: 1.06;
+        letter-spacing: -0.022em;
+        font-weight: 600;
+        margin: 0 0 0.7rem;
+        text-wrap: balance;
+      }
+      .lede p {
+        font-size: 1.08rem;
+        color: var(--ink-2);
+        margin: 0 0 1rem;
+        max-width: 62ch;
+      }
+      .lede p:last-child {
+        margin-bottom: 0;
+      }
+      .pitch {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 1.25rem;
+      }
+      .pitch span {
+        font: 500 0.74rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        color: var(--wire);
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 2rem;
+        padding: 0.38rem 0.7rem;
+      }
 
-section { scroll-margin-top: 1.5rem; padding-top: 2.75rem; }
-section + section { border-top: 1px solid var(--line-2); }
-h2 { font-family: ui-serif, Georgia, "Iowan Old Style", Palatino, serif; font-size: 1.85rem; line-height: 1.15; letter-spacing: -.017em; font-weight: 600; margin: 0 0 .35rem; text-wrap: balance; }
-h3 { font-size: 1.12rem; font-weight: 650; letter-spacing: -.006em; margin: 2.25rem 0 .6rem; text-wrap: balance; }
-h4 { font: 600 .72rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin: 1.75rem 0 .55rem; }
-.eyebrow { font: 600 .68rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-transform: uppercase; letter-spacing: .11em; color: var(--accent); margin: 0 0 .55rem; }
-p { margin: 0 0 1rem; max-width: 68ch; }
-li > p { margin-bottom: .4rem; }
-a { color: var(--accent); text-underline-offset: .17em; text-decoration-thickness: .06em; }
-a:hover { color: var(--accent-2); }
-a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: .15rem; }
-ul, ol { margin: 0 0 1rem; padding-left: 1.25rem; max-width: 68ch; }
-li { margin-bottom: .35rem; }
-li::marker { color: var(--muted); }
-strong { font-weight: 640; }
-hr { border: 0; border-top: 1px solid var(--line-2); margin: 2rem 0; }
+      section {
+        scroll-margin-top: 1.5rem;
+        padding-top: 2.75rem;
+      }
+      section + section {
+        border-top: 1px solid var(--line-2);
+      }
+      h2 {
+        font-family: ui-serif, Georgia, "Iowan Old Style", Palatino, serif;
+        font-size: 1.85rem;
+        line-height: 1.15;
+        letter-spacing: -0.017em;
+        font-weight: 600;
+        margin: 0 0 0.35rem;
+        text-wrap: balance;
+      }
+      h3 {
+        font-size: 1.12rem;
+        font-weight: 650;
+        letter-spacing: -0.006em;
+        margin: 2.25rem 0 0.6rem;
+        text-wrap: balance;
+      }
+      h4 {
+        font: 600 0.72rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+        margin: 1.75rem 0 0.55rem;
+      }
+      .eyebrow {
+        font: 600 0.68rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        color: var(--accent);
+        margin: 0 0 0.55rem;
+      }
+      p {
+        margin: 0 0 1rem;
+        max-width: 68ch;
+      }
+      li > p {
+        margin-bottom: 0.4rem;
+      }
+      a {
+        color: var(--accent);
+        text-underline-offset: 0.17em;
+        text-decoration-thickness: 0.06em;
+      }
+      a:hover {
+        color: var(--accent-2);
+      }
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 0.15rem;
+      }
+      ul,
+      ol {
+        margin: 0 0 1rem;
+        padding-left: 1.25rem;
+        max-width: 68ch;
+      }
+      li {
+        margin-bottom: 0.35rem;
+      }
+      li::marker {
+        color: var(--muted);
+      }
+      strong {
+        font-weight: 640;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line-2);
+        margin: 2rem 0;
+      }
 
-/* inline code */
-code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: .875em; }
-p > code, li > code, td > code, th > code, h3 > code, h2 > code, summary > code, dt > code {
-  background: var(--surface-2); border: 1px solid var(--line-2); border-radius: .3rem;
-  padding: .08em .34em; color: var(--ink); white-space: nowrap;
-}
+      /* inline code */
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+          "Liberation Mono", monospace;
+        font-size: 0.875em;
+      }
+      p > code,
+      li > code,
+      td > code,
+      th > code,
+      h3 > code,
+      h2 > code,
+      summary > code,
+      dt > code {
+        background: var(--surface-2);
+        border: 1px solid var(--line-2);
+        border-radius: 0.3rem;
+        padding: 0.08em 0.34em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
 
-/* code blocks */
-.snippet { margin: 0 0 1.25rem; border: 1px solid var(--line); border-radius: .6rem; background: var(--code-bg); overflow: hidden; box-shadow: var(--shadow); }
-.snippet-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .45rem .8rem; border-bottom: 1px solid var(--line-2); background: var(--surface); }
-.snippet-lang { font: 600 .66rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
-.snippet-note { font: 500 .72rem/1.3 system-ui, sans-serif; color: var(--muted); text-align: right; }
-.snippet pre { margin: 0; padding: .95rem 1rem; overflow-x: auto; font-size: .845rem; line-height: 1.62; }
-.snippet code { color: var(--ink); white-space: pre; }
-.tok-str { color: var(--tok-str); }
-.tok-kw { color: var(--tok-kw); }
-.tok-com { color: var(--tok-com); font-style: italic; }
-.tok-num { color: var(--tok-num); }
-.tok-key { color: var(--tok-key); }
+      /* code blocks */
+      .snippet {
+        margin: 0 0 1.25rem;
+        border: 1px solid var(--line);
+        border-radius: 0.6rem;
+        background: var(--code-bg);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+      .snippet-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.45rem 0.8rem;
+        border-bottom: 1px solid var(--line-2);
+        background: var(--surface);
+      }
+      .snippet-lang {
+        font: 600 0.66rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+      }
+      .snippet-note {
+        font: 500 0.72rem/1.3 system-ui, sans-serif;
+        color: var(--muted);
+        text-align: right;
+      }
+      .snippet pre {
+        margin: 0;
+        padding: 0.95rem 1rem;
+        overflow-x: auto;
+        font-size: 0.845rem;
+        line-height: 1.62;
+      }
+      .snippet code {
+        color: var(--ink);
+        white-space: pre;
+      }
+      .tok-str {
+        color: var(--tok-str);
+      }
+      .tok-kw {
+        color: var(--tok-kw);
+      }
+      .tok-com {
+        color: var(--tok-com);
+        font-style: italic;
+      }
+      .tok-num {
+        color: var(--tok-num);
+      }
+      .tok-key {
+        color: var(--tok-key);
+      }
 
-/* callouts */
-.note { border: 1px solid var(--line); border-left: 3px solid var(--accent); background: var(--surface); border-radius: .5rem; padding: .9rem 1.1rem; margin: 0 0 1.25rem; }
-.note > :last-child { margin-bottom: 0; }
-.note-label { font: 600 .68rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-transform: uppercase; letter-spacing: .09em; color: var(--accent); display: block; margin-bottom: .4rem; }
-.note.warn { border-left-color: var(--warn); background: var(--warn-soft); border-color: var(--warn-line); }
-.note.warn .note-label { color: var(--warn); }
-.note.danger { border-left-color: var(--danger); background: var(--danger-soft); border-color: var(--danger-line); }
-.note.danger .note-label { color: var(--danger); }
+      /* callouts */
+      .note {
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        background: var(--surface);
+        border-radius: 0.5rem;
+        padding: 0.9rem 1.1rem;
+        margin: 0 0 1.25rem;
+      }
+      .note > :last-child {
+        margin-bottom: 0;
+      }
+      .note-label {
+        font: 600 0.68rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--accent);
+        display: block;
+        margin-bottom: 0.4rem;
+      }
+      .note.warn {
+        border-left-color: var(--warn);
+        background: var(--warn-soft);
+        border-color: var(--warn-line);
+      }
+      .note.warn .note-label {
+        color: var(--warn);
+      }
+      .note.danger {
+        border-left-color: var(--danger);
+        background: var(--danger-soft);
+        border-color: var(--danger-line);
+      }
+      .note.danger .note-label {
+        color: var(--danger);
+      }
 
-/* tables */
-.table-wrap { overflow-x: auto; margin: 0 0 1.25rem; border: 1px solid var(--line); border-radius: .6rem; background: var(--surface); }
-table { border-collapse: collapse; width: 100%; font-size: .875rem; }
-th, td { text-align: left; padding: .6rem .85rem; border-bottom: 1px solid var(--line-2); vertical-align: top; }
-thead th { font: 600 .68rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); background: var(--surface-2); white-space: nowrap; }
-tbody tr:last-child td { border-bottom: 0; }
-td code { white-space: nowrap; }
-td:first-child { white-space: nowrap; }
+      /* tables */
+      .table-wrap {
+        overflow-x: auto;
+        margin: 0 0 1.25rem;
+        border: 1px solid var(--line);
+        border-radius: 0.6rem;
+        background: var(--surface);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.875rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.6rem 0.85rem;
+        border-bottom: 1px solid var(--line-2);
+        vertical-align: top;
+      }
+      thead th {
+        font: 600 0.68rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        background: var(--surface-2);
+        white-space: nowrap;
+      }
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      td code {
+        white-space: nowrap;
+      }
+      td:first-child {
+        white-space: nowrap;
+      }
 
-/* definition rows for option reference */
-.opts { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: .6rem; overflow: hidden; margin: 0 0 1.25rem; background: var(--surface); }
-.opt { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 1.25rem; padding: .8rem 1rem; border-bottom: 1px solid var(--line-2); }
-.opt:last-child { border-bottom: 0; }
-@media (max-width: 46rem) { .opt { grid-template-columns: minmax(0,1fr); gap: .25rem; } }
-.opt-name { font: 600 .82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--accent); word-break: break-word; }
-.opt-type { display: block; font: 400 .74rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--muted); margin-top: .15rem; white-space: normal; }
-.opt-body { font-size: .9rem; color: var(--ink-2); }
-.opt-body > :last-child { margin-bottom: 0; }
-.opt-body p { margin-bottom: .5rem; max-width: none; }
+      /* definition rows for option reference */
+      .opts {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border: 1px solid var(--line);
+        border-radius: 0.6rem;
+        overflow: hidden;
+        margin: 0 0 1.25rem;
+        background: var(--surface);
+      }
+      .opt {
+        display: grid;
+        grid-template-columns: 13rem minmax(0, 1fr);
+        gap: 1.25rem;
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid var(--line-2);
+      }
+      .opt:last-child {
+        border-bottom: 0;
+      }
+      @media (max-width: 46rem) {
+        .opt {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 0.25rem;
+        }
+      }
+      .opt-name {
+        font: 600 0.82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        color: var(--accent);
+        word-break: break-word;
+      }
+      .opt-type {
+        display: block;
+        font: 400 0.74rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        color: var(--muted);
+        margin-top: 0.15rem;
+        white-space: normal;
+      }
+      .opt-body {
+        font-size: 0.9rem;
+        color: var(--ink-2);
+      }
+      .opt-body > :last-child {
+        margin-bottom: 0;
+      }
+      .opt-body p {
+        margin-bottom: 0.5rem;
+        max-width: none;
+      }
 
-.anchor { color: var(--muted); text-decoration: none; opacity: 0; margin-left: .4rem; font-weight: 400; }
-h2:hover .anchor, h3:hover .anchor, .anchor:focus-visible { opacity: 1; }
+      .anchor {
+        color: var(--muted);
+        text-decoration: none;
+        opacity: 0;
+        margin-left: 0.4rem;
+        font-weight: 400;
+      }
+      h2:hover .anchor,
+      h3:hover .anchor,
+      .anchor:focus-visible {
+        opacity: 1;
+      }
 
-footer { border-top: 1px solid var(--line); margin-top: 4rem; padding-top: 1.5rem; color: var(--muted); font-size: .85rem; }
-</style>
-</head>
-<body>
-<div class="shell">
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 4rem;
+        padding-top: 1.5rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="rail">
+        <div class="brand">
+          <span class="brand-mark">preact-signal-formly</span>
+          <span class="brand-ver">0.1.2</span>
+        </div>
+        <p class="brand-sub">
+          Config-driven forms for Preact. Signal-first, zero re-render.
+        </p>
 
-<div class="rail">
-  <div class="brand">
-    <span class="brand-mark">preact-signal-formly</span>
-    <span class="brand-ver">0.1.0</span>
-  </div>
-  <p class="brand-sub">Config-driven forms for Preact. Signal-first, zero re-render.</p>
+        <details class="toc-shell" open>
+          <summary>Contents</summary>
+          <p class="toc-title">Contents</p>
+          <nav class="toc" aria-label="Table of contents">
+            <ol>
+              <li><a href="#install">Install</a></li>
+              <li><a href="#quick-start">Quick start</a></li>
+              <li><a href="#signal-rules">The signal rules</a></li>
+              <li>
+                <a href="#form">The form component</a>
+                <ol>
+                  <li><a href="#form-props">Props</a></li>
+                  <li><a href="#form-options">formOptions</a></li>
+                </ol>
+              </li>
+              <li>
+                <a href="#field-config">Field config</a>
+                <ol>
+                  <li><a href="#field-kinds">The three kinds</a></li>
+                  <li><a href="#config-reference">Every option</a></li>
+                  <li><a href="#default-value">defaultValue</a></li>
+                </ol>
+              </li>
+              <li>
+                <a href="#expressions">Expressions</a>
+                <ol>
+                  <li><a href="#expression-forms">Four forms</a></li>
+                  <li><a href="#expression-keys">Keys</a></li>
+                  <li><a href="#string-expressions">String expressions</a></li>
+                  <li><a href="#expression-grammar">Grammar</a></li>
+                </ol>
+              </li>
+              <li>
+                <a href="#validation">Validation</a>
+                <ol>
+                  <li><a href="#validation-layers">Three layers</a></li>
+                  <li><a href="#validation-messages">Messages</a></li>
+                  <li><a href="#validation-timing">When it runs</a></li>
+                </ol>
+              </li>
+              <li><a href="#builder">Builder API</a></li>
+              <li><a href="#built-ins">Built-ins</a></li>
+              <li>
+                <a href="#authoring">Writing a field type</a>
+                <ol>
+                  <li><a href="#binding">Binding the input</a></li>
+                  <li><a href="#context">Context reference</a></li>
+                  <li><a href="#wrappers">Wrappers</a></li>
+                  <li><a href="#array-types">Array types</a></li>
+                </ol>
+              </li>
+              <li><a href="#groups-arrays">Groups &amp; arrays</a></li>
+              <li><a href="#hooks">Field hooks</a></li>
+              <li><a href="#extensions">Extensions</a></li>
+              <li><a href="#typescript">TypeScript</a></li>
+              <li><a href="#escape-hatch">Escape hatches</a></li>
+              <li><a href="#exports">Exports</a></li>
+            </ol>
+          </nav>
+        </details>
 
-  <details class="toc-shell" open>
-    <summary>Contents</summary>
-    <p class="toc-title">Contents</p>
-    <nav class="toc" aria-label="Table of contents">
-      <ol>
-        <li><a href="#install">Install</a></li>
-        <li><a href="#quick-start">Quick start</a></li>
-        <li><a href="#signal-rules">The signal rules</a></li>
-        <li><a href="#form">The form component</a>
-          <ol>
-            <li><a href="#form-props">Props</a></li>
-            <li><a href="#form-options">formOptions</a></li>
-          </ol>
-        </li>
-        <li><a href="#field-config">Field config</a>
-          <ol>
-            <li><a href="#field-kinds">The three kinds</a></li>
-            <li><a href="#config-reference">Every option</a></li>
-            <li><a href="#default-value">defaultValue</a></li>
-          </ol>
-        </li>
-        <li><a href="#expressions">Expressions</a>
-          <ol>
-            <li><a href="#expression-forms">Four forms</a></li>
-            <li><a href="#expression-keys">Keys</a></li>
-            <li><a href="#string-expressions">String expressions</a></li>
-            <li><a href="#expression-grammar">Grammar</a></li>
-          </ol>
-        </li>
-        <li><a href="#validation">Validation</a>
-          <ol>
-            <li><a href="#validation-layers">Three layers</a></li>
-            <li><a href="#validation-messages">Messages</a></li>
-            <li><a href="#validation-timing">When it runs</a></li>
-          </ol>
-        </li>
-        <li><a href="#builder">Builder API</a></li>
-        <li><a href="#built-ins">Built-ins</a></li>
-        <li><a href="#authoring">Writing a field type</a>
-          <ol>
-            <li><a href="#binding">Binding the input</a></li>
-            <li><a href="#context">Context reference</a></li>
-            <li><a href="#wrappers">Wrappers</a></li>
-            <li><a href="#array-types">Array types</a></li>
-          </ol>
-        </li>
-        <li><a href="#groups-arrays">Groups &amp; arrays</a></li>
-        <li><a href="#hooks">Field hooks</a></li>
-        <li><a href="#extensions">Extensions</a></li>
-        <li><a href="#typescript">TypeScript</a></li>
-        <li><a href="#escape-hatch">Escape hatches</a></li>
-        <li><a href="#exports">Exports</a></li>
-      </ol>
-    </nav>
-  </details>
+        <div class="rail-foot">
+          <button
+            class="theme-toggle"
+            type="button"
+            id="theme-toggle"
+            aria-live="polite"
+          >
+            Switch theme
+          </button>
+        </div>
+      </div>
 
-  <div class="rail-foot">
-    <button class="theme-toggle" type="button" id="theme-toggle" aria-live="polite">Switch theme</button>
-  </div>
-</div>
+      <main>
+        <header class="lede">
+          <h1>preact-signal-formly</h1>
+          <p>
+            Dynamic, config-driven forms for Preact — a
+            <a href="https://formly.dev/">Formly</a> analogue built entirely on
+            <code>@preact/signals</code> and
+            <code>@dmytromykhailiuk/preact-signal-hook-forms</code>.
+          </p>
+          <p>
+            You describe a form as data. The library renders it, wires
+            validation, and keeps a model signal in sync. Field components mount
+            <strong>once</strong> — every update after that, whether a value, a
+            dynamic prop, a validation message or a field appearing and
+            disappearing, travels through signals bound directly to DOM
+            attributes and text nodes. Nothing re-renders.
+          </p>
+          <div class="pitch">
+            <span>zero re-render</span>
+            <span>JSON-serialisable config</span>
+            <span>per-field validation timing</span>
+            <span>no eval</span>
+            <span>typed end to end</span>
+          </div>
+        </header>
 
-<main>
-  <header class="lede">
-    <h1>preact-signal-formly</h1>
-    <p>Dynamic, config-driven forms for Preact — a <a href="https://formly.dev/">Formly</a> analogue built entirely on <code>@preact/signals</code> and <code>@dmytromykhailiuk/preact-signal-hook-forms</code>.</p>
-    <p>You describe a form as data. The library renders it, wires validation, and keeps a model signal in sync. Field components mount <strong>once</strong> — every update after that, whether a value, a dynamic prop, a validation message or a field appearing and disappearing, travels through signals bound directly to DOM attributes and text nodes. Nothing re-renders.</p>
-    <div class="pitch">
-      <span>zero re-render</span>
-      <span>JSON-serialisable config</span>
-      <span>per-field validation timing</span>
-      <span>no eval</span>
-      <span>typed end to end</span>
-    </div>
-  </header>
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="install">
+          <p class="eyebrow">Getting started</p>
+          <h2>
+            Install<a
+              class="anchor"
+              href="#install"
+              aria-label="Link to Install"
+              >#</a
+            >
+          </h2>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">sh</span></div>
+            <pre><code data-lang="sh">npm i @dmytromykhailiuk/preact-signal-formly @dmytromykhailiuk/preact-signal-hook-forms @preact/signals preact</code></pre>
+          </div>
+          <div class="note">
+            <span class="note-label">Peer requirements</span>
+            <p>
+              <code>@preact/signals</code> <strong>^2.0.0</strong>,
+              <code>preact</code> &gt;=10.25.0,
+              <code>@dmytromykhailiuk/preact-signal-hook-forms</code>
+              &gt;=0.1.1. Signals v2 matters: <code>For</code> and
+              <code>Show</code> live in the <code>/utils</code> subpath, and the
+              whole rendering strategy depends on them.
+            </p>
+          </div>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="install">
-    <p class="eyebrow">Getting started</p>
-    <h2>Install<a class="anchor" href="#install" aria-label="Link to Install">#</a></h2>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">sh</span></div><pre><code data-lang="sh">npm i @dmytromykhailiuk/preact-signal-formly @dmytromykhailiuk/preact-signal-hook-forms @preact/signals preact</code></pre></div>
-    <div class="note">
-      <span class="note-label">Peer requirements</span>
-      <p><code>@preact/signals</code> <strong>^2.0.0</strong>, <code>preact</code> &gt;=10.25.0, <code>@dmytromykhailiuk/preact-signal-hook-forms</code> &gt;=0.1.0. Signals v2 matters: <code>For</code> and <code>Show</code> live in the <code>/utils</code> subpath, and the whole rendering strategy depends on them.</p>
-    </div>
-  </section>
-
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="quick-start">
-    <h2>Quick start<a class="anchor" href="#quick-start" aria-label="Link to Quick start">#</a></h2>
-    <p>Build a form component once at module scope, then feed it three writable signals.</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">tsx</span></div><pre><code data-lang="tsx">import { signal } from "@preact/signals";
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="quick-start">
+          <h2>
+            Quick start<a
+              class="anchor"
+              href="#quick-start"
+              aria-label="Link to Quick start"
+              >#</a
+            >
+          </h2>
+          <p>
+            Build a form component once at module scope, then feed it three
+            writable signals.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">tsx</span>
+            </div>
+            <pre><code data-lang="tsx">import { signal } from "@preact/signals";
 import { createFormlyFormBuilder, defineFields } from "@dmytromykhailiuk/preact-signal-formly";
 
 // 1. Build once — register whatever you need, then build().
@@ -307,169 +869,567 @@ export function App() {
       &lt;button type="submit"&gt;Send&lt;/button&gt;
     &lt;/FormlyForm&gt;
   );
-}</code></pre></div>
-    <p>The builder is separate from the component on purpose: <code>build()</code> takes an immutable snapshot of the registry, so a registration made afterwards can never change a form that is already running.</p>
-  </section>
+}</code></pre>
+          </div>
+          <p>
+            The builder is separate from the component on purpose:
+            <code>build()</code> takes an immutable snapshot of the registry, so
+            a registration made afterwards can never change a form that is
+            already running.
+          </p>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="signal-rules">
-    <h2>The signal rules<a class="anchor" href="#signal-rules" aria-label="Link to The signal rules">#</a></h2>
-    <p>Everything the API hands you is a signal, a callback, or a stable reference — never a plain value that changes. Three rules keep the zero-re-render promise intact when you write your own types:</p>
-    <ol>
-      <li><strong>Never read <code>signal.value</code> in a component body.</strong> That subscribes the component and causes a re-render. Unwrap only inside <code>computed</code> / <code>useComputed</code> / <code>effect</code> / <code>useSignalEffect</code>.</li>
-      <li><strong>Pass signals straight to the DOM</strong> — <code>disabled={disabledComputed}</code>, <code>&lt;span&gt;{label}&lt;/span&gt;</code>. Preact binds them without re-rendering the component.</li>
-      <li><strong>Use <code>&lt;For&gt;</code> and <code>&lt;Show&gt;</code></strong> from <code>@preact/signals/utils</code> for lists and conditionals, instead of mapping arrays and writing ternaries in JSX.</li>
-    </ol>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">tsx</span><span class="snippet-note">The pattern every built-in type follows</span></div><pre><code data-lang="tsx">createFieldType(({ id, control, namePath, props, fieldState }) =&gt; {
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="signal-rules">
+          <h2>
+            The signal rules<a
+              class="anchor"
+              href="#signal-rules"
+              aria-label="Link to The signal rules"
+              >#</a
+            >
+          </h2>
+          <p>
+            Everything the API hands you is a signal, a callback, or a stable
+            reference — never a plain value that changes. Three rules keep the
+            zero-re-render promise intact when you write your own types:
+          </p>
+          <ol>
+            <li>
+              <strong
+                >Never read <code>signal.value</code> in a component
+                body.</strong
+              >
+              That subscribes the component and causes a re-render. Unwrap only
+              inside <code>computed</code> / <code>useComputed</code> /
+              <code>effect</code> / <code>useSignalEffect</code>.
+            </li>
+            <li>
+              <strong>Pass signals straight to the DOM</strong> —
+              <code>disabled={disabledComputed}</code>,
+              <code>&lt;span&gt;{label}&lt;/span&gt;</code>. Preact binds them
+              without re-rendering the component.
+            </li>
+            <li>
+              <strong
+                >Use <code>&lt;For&gt;</code> and
+                <code>&lt;Show&gt;</code></strong
+              >
+              from <code>@preact/signals/utils</code> for lists and
+              conditionals, instead of mapping arrays and writing ternaries in
+              JSX.
+            </li>
+          </ol>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">tsx</span
+              ><span class="snippet-note"
+                >The pattern every built-in type follows</span
+              >
+            </div>
+            <pre><code data-lang="tsx">createFieldType(({ id, control, namePath, props, fieldState }) =&gt; {
   // Runs exactly once. Everything dynamic below is a signal.
   const placeholder = useComputed(() =&gt; props.value.placeholder ?? "");
   const invalid = useComputed(() =&gt; (fieldState.error.value ? "true" : "false"));
   return &lt;input {...control.register(namePath)} id={id} placeholder={placeholder} aria-invalid={invalid} /&gt;;
-});</code></pre></div>
-  </section>
+});</code></pre>
+          </div>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="form">
-    <p class="eyebrow">Reference</p>
-    <h2>The form component<a class="anchor" href="#form" aria-label="Link to The form component">#</a></h2>
-    <p><code>builder.build&lt;Model&gt;()</code> returns a component. It owns the underlying form control, the two-way syncing, and the field tree.</p>
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="form">
+          <p class="eyebrow">Reference</p>
+          <h2>
+            The form component<a
+              class="anchor"
+              href="#form"
+              aria-label="Link to The form component"
+              >#</a
+            >
+          </h2>
+          <p>
+            <code>builder.build&lt;Model&gt;()</code> returns a component. It
+            owns the underlying form control, the two-way syncing, and the field
+            tree.
+          </p>
 
-    <h3 id="form-props">Props<a class="anchor" href="#form-props" aria-label="Link to Props">#</a></h3>
-    <div class="opts">
-      <div class="opt">
-        <div class="opt-name">model<span class="opt-type">Signal&lt;Model&gt;</span></div>
-        <div class="opt-body"><p>Two-way synced with the form values. Typing updates <code>model.value</code>; writing a new object to <code>model.value</code> updates the inputs.</p><p>Treat the value as immutable — always write a new object. A deep-equal write is absorbed as a no-op; a genuinely different value goes through <code>setValue</code>, which <strong>dirties</strong> the form. Use <code>controlRef</code> + <code>control.reset()</code> to set a new pristine baseline instead.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">config<span class="opt-type">Signal&lt;FormlyFieldConfig[]&gt;</span></div>
-        <div class="opt-body"><p>Read reactively. Replace it with a new array and mounted fields update <strong>in place</strong> through signals — matched by <code>key</code>, kind and type — without remounting. Change a field's <code>key</code>/kind/type and that row remounts.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">formState<span class="opt-type">Signal&lt;Record&lt;string, any&gt; | undefined&gt;</span></div>
-        <div class="opt-body"><p>Two-way synced with <code>form.formState.shared</code> — a writable scratch signal for cross-field or app state that the library itself never touches. Expressions and validators can read it, so it is the natural place for "which wizard step am I on".</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">formOptions<span class="opt-type">Omit&lt;UseFormOptions&lt;Model&gt;, "defaultValues"&gt;</span></div>
-        <div class="opt-body"><p>Forwarded to the base library's <code>useForm</code>, read once at mount. See <a href="#form-options">below</a>.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">onSubmit<span class="opt-type">(values: Model, event?: Event) =&gt; unknown | Promise&lt;unknown&gt;</span></div>
-        <div class="opt-body"><p>Called only after validation passes. Without it, the form still prevents the browser's default submit.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">controlRef<span class="opt-type">(control: FormControl&lt;Model&gt;) =&gt; void</span></div>
-        <div class="opt-body"><p>Escape hatch to the underlying control — <code>reset</code>, <code>trigger</code>, <code>setError</code>, <code>getValues</code>, <code>handleSubmit</code>, <code>formState</code>. Called once, after mount.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">children<span class="opt-type">ComponentChildren</span></div>
-        <div class="opt-body"><p>Rendered inside the <code>&lt;form&gt;</code> after the fields — the submit button usually.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">className<span class="opt-type">string</span></div>
-        <div class="opt-body"><p>Applied to the <code>&lt;form&gt;</code> element.</p></div>
-      </div>
-    </div>
+          <h3 id="form-props">
+            Props<a class="anchor" href="#form-props" aria-label="Link to Props"
+              >#</a
+            >
+          </h3>
+          <div class="opts">
+            <div class="opt">
+              <div class="opt-name">
+                model<span class="opt-type">Signal&lt;Model&gt;</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Two-way synced with the form values. Typing updates
+                  <code>model.value</code>; writing a new object to
+                  <code>model.value</code> updates the inputs.
+                </p>
+                <p>
+                  Treat the value as immutable — always write a new object. A
+                  deep-equal write is absorbed as a no-op; a genuinely different
+                  value goes through <code>setValue</code>, which
+                  <strong>dirties</strong> the form. Use
+                  <code>controlRef</code> + <code>control.reset()</code> to set
+                  a new pristine baseline instead.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                config<span class="opt-type"
+                  >Signal&lt;FormlyFieldConfig[]&gt;</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Read reactively. Replace it with a new array and mounted
+                  fields update <strong>in place</strong> through signals —
+                  matched by <code>key</code>, kind and type — without
+                  remounting. Change a field's <code>key</code>/kind/type and
+                  that row remounts.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                formState<span class="opt-type"
+                  >Signal&lt;Record&lt;string, any&gt; | undefined&gt;</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Two-way synced with <code>form.formState.shared</code> — a
+                  writable scratch signal for cross-field or app state that the
+                  library itself never touches. Expressions and validators can
+                  read it, so it is the natural place for "which wizard step am
+                  I on".
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                formOptions<span class="opt-type"
+                  >Omit&lt;UseFormOptions&lt;Model&gt;,
+                  "defaultValues"&gt;</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Forwarded to the base library's <code>useForm</code>, read
+                  once at mount. See <a href="#form-options">below</a>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                onSubmit<span class="opt-type"
+                  >(values: Model, event?: Event) =&gt; unknown |
+                  Promise&lt;unknown&gt;</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Called only after validation passes. Without it, the form
+                  still prevents the browser's default submit.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                controlRef<span class="opt-type"
+                  >(control: FormControl&lt;Model&gt;) =&gt; void</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Escape hatch to the underlying control — <code>reset</code>,
+                  <code>trigger</code>, <code>setError</code>,
+                  <code>getValues</code>, <code>handleSubmit</code>,
+                  <code>formState</code>. Called once, after mount.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                children<span class="opt-type">ComponentChildren</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Rendered inside the <code>&lt;form&gt;</code> after the fields
+                  — the submit button usually.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                className<span class="opt-type">string</span>
+              </div>
+              <div class="opt-body">
+                <p>Applied to the <code>&lt;form&gt;</code> element.</p>
+              </div>
+            </div>
+          </div>
 
-    <h3 id="form-options">formOptions<a class="anchor" href="#form-options" aria-label="Link to formOptions">#</a></h3>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Option</th><th>Meaning</th></tr></thead>
-      <tbody>
-        <tr><td><code>mode</code></td><td>When fields validate before the first submit — see <a href="#validation-timing">When validation runs</a>. Default <code>"all"</code>.</td></tr>
-        <tr><td><code>reValidateMode</code></td><td>When they re-validate after submit, or while showing an error. Default <code>"onChange"</code>.</td></tr>
-        <tr><td><code>resolver</code></td><td>Schema validation (zod, yup, …) for the whole model, from the base library.</td></tr>
-        <tr><td><code>criteriaMode</code></td><td><code>"firstError"</code> (default) or <code>"all"</code>.</td></tr>
-        <tr><td><code>delayError</code></td><td>Milliseconds before a <em>new</em> error is shown. Clearing is always instant.</td></tr>
-        <tr><td><code>shouldFocusError</code></td><td>Focus the first invalid field on a failed submit. Default <code>true</code>.</td></tr>
-        <tr><td><code>shouldUnregister</code></td><td>Drop a field's value when it unregisters. Default <code>false</code>.</td></tr>
-      </tbody>
-    </table></div>
-    <div class="note warn">
-      <span class="note-label">Two caveats</span>
-      <p><code>defaultValues</code> is <strong>not</strong> accepted — the <code>model</code> prop and each field's <a href="#default-value"><code>defaultValue</code></a> own that.</p>
-      <p><code>formOptions</code> is read <strong>once at mount</strong>, like <code>useForm</code> itself. Changing the prop later has no effect. Per-field timing, by contrast, is live and can be changed by replacing the config.</p>
-    </div>
-  </section>
+          <h3 id="form-options">
+            formOptions<a
+              class="anchor"
+              href="#form-options"
+              aria-label="Link to formOptions"
+              >#</a
+            >
+          </h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Option</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>mode</code></td>
+                  <td>
+                    When fields validate before the first submit — see
+                    <a href="#validation-timing">When validation runs</a>.
+                    Default <code>"all"</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>reValidateMode</code></td>
+                  <td>
+                    When they re-validate after submit, or while showing an
+                    error. Default <code>"onChange"</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>resolver</code></td>
+                  <td>
+                    Schema validation (zod, yup, …) for the whole model, from
+                    the base library.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>criteriaMode</code></td>
+                  <td>
+                    <code>"firstError"</code> (default) or <code>"all"</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>delayError</code></td>
+                  <td>
+                    Milliseconds before a <em>new</em> error is shown. Clearing
+                    is always instant.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>shouldFocusError</code></td>
+                  <td>
+                    Focus the first invalid field on a failed submit. Default
+                    <code>true</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>shouldUnregister</code></td>
+                  <td>
+                    Drop a field's value when it unregisters. Default
+                    <code>false</code>.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="note warn">
+            <span class="note-label">Two caveats</span>
+            <p>
+              <code>defaultValues</code> is <strong>not</strong> accepted — the
+              <code>model</code> prop and each field's
+              <a href="#default-value"><code>defaultValue</code></a> own that.
+            </p>
+            <p>
+              <code>formOptions</code> is read <strong>once at mount</strong>,
+              like <code>useForm</code> itself. Changing the prop later has no
+              effect. Per-field timing, by contrast, is live and can be changed
+              by replacing the config.
+            </p>
+          </div>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="field-config">
-    <h2>Field config<a class="anchor" href="#field-config" aria-label="Link to Field config">#</a></h2>
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="field-config">
+          <h2>
+            Field config<a
+              class="anchor"
+              href="#field-config"
+              aria-label="Link to Field config"
+              >#</a
+            >
+          </h2>
 
-    <h3 id="field-kinds">The three kinds<a class="anchor" href="#field-kinds" aria-label="Link to The three kinds">#</a></h3>
-    <p>A field is exactly one of three things, decided by which property it carries:</p>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Kind</th><th>Marked by</th><th>Owns a value</th><th>Needs a key</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Leaf</strong></td><td><code>type</code></td><td>Yes — one value at its path</td><td>Yes</td></tr>
-        <tr><td><strong>Group</strong></td><td><code>fieldGroup</code></td><td>No — it nests other fields</td><td>No (keyless = transparent)</td></tr>
-        <tr><td><strong>Array</strong></td><td><code>fieldArray</code></td><td>Yes — an array of items</td><td>Yes</td></tr>
-      </tbody>
-    </table></div>
-    <p>Keys compose into dot-paths automatically: a leaf <code>city</code> inside a group <code>address</code> is <code>address.city</code>; inside an array it becomes <code>phones.0.number</code>. A group with no <code>key</code> is purely a layout wrapper — it adds a <code>&lt;div&gt;</code> and no path segment.</p>
+          <h3 id="field-kinds">
+            The three kinds<a
+              class="anchor"
+              href="#field-kinds"
+              aria-label="Link to The three kinds"
+              >#</a
+            >
+          </h3>
+          <p>
+            A field is exactly one of three things, decided by which property it
+            carries:
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kind</th>
+                  <th>Marked by</th>
+                  <th>Owns a value</th>
+                  <th>Needs a key</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Leaf</strong></td>
+                  <td><code>type</code></td>
+                  <td>Yes — one value at its path</td>
+                  <td>Yes</td>
+                </tr>
+                <tr>
+                  <td><strong>Group</strong></td>
+                  <td><code>fieldGroup</code></td>
+                  <td>No — it nests other fields</td>
+                  <td>No (keyless = transparent)</td>
+                </tr>
+                <tr>
+                  <td><strong>Array</strong></td>
+                  <td><code>fieldArray</code></td>
+                  <td>Yes — an array of items</td>
+                  <td>Yes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Keys compose into dot-paths automatically: a leaf
+            <code>city</code> inside a group <code>address</code> is
+            <code>address.city</code>; inside an array it becomes
+            <code>phones.0.number</code>. A group with no <code>key</code> is
+            purely a layout wrapper — it adds a <code>&lt;div&gt;</code> and no
+            path segment.
+          </p>
 
-    <h3 id="config-reference">Every option<a class="anchor" href="#config-reference" aria-label="Link to Every option">#</a></h3>
-    <div class="opts">
-      <div class="opt">
-        <div class="opt-name">key<span class="opt-type">string | number</span></div>
-        <div class="opt-body"><p>Path segment relative to the parent. Required for leaves and arrays — omitting it throws with the field's type named.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">type<span class="opt-type">string</span></div>
-        <div class="opt-body"><p>Name of a type registered on the builder. An unknown name throws, listing what <em>is</em> registered.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">props<span class="opt-type">Record&lt;string, any&gt;</span></div>
-        <div class="opt-body"><p>Everything the type component reads. The <a href="#built-ins">built-in props</a> also drive validation rules and the built-in wrapper. Custom props are free-form.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">defaultValue<span class="opt-type">any</span></div>
-        <div class="opt-body"><p>Applied when the model holds no value at this path. See <a href="#default-value">defaultValue</a>.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">className<span class="opt-type">string</span></div>
-        <div class="opt-body"><p>Class for the field's wrapper element. Read by types and wrappers as <code>ctx.className</code> (a signal), with <code>expressions["className"]</code> already applied.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">wrappers<span class="opt-type">string[]</span></div>
-        <div class="opt-body"><p>Overrides the type's default wrappers. <code>wrappers[0]</code> ends up <strong>outermost</strong>. Fixed at mount — changing it later needs a remount.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">hide<span class="opt-type">boolean | Signal | ((ctx) =&gt; boolean) | string</span></div>
-        <div class="opt-body"><p>Hides the field. The value and its registration are <strong>kept</strong> while hidden, so a hidden field still validates and still appears in the model — hiding is presentation, not removal. To drop a field entirely, take it out of the config.</p><p>A bare string here is read as an <a href="#string-expressions">expression</a>.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">expressions<span class="opt-type">{ hide?, className?, "props.&lt;name&gt;"? }</span></div>
-        <div class="opt-body"><p>Dynamic overrides evaluated inside computeds. See <a href="#expressions">Expressions</a>.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">validators<span class="opt-type">{ validation?: string[]; [name]: fn | entry }</span></div>
-        <div class="opt-body"><p>Registered validators by name, plus inline ones. See <a href="#validation-layers">Validation</a>.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">validation<span class="opt-type">{ messages?, mode?, reValidateMode? }</span></div>
-        <div class="opt-body"><p>Per-field message overrides and per-field <a href="#validation-timing">validation timing</a>.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">fieldGroup<span class="opt-type">FormlyFieldConfig[]</span></div>
-        <div class="opt-body"><p>Nested fields. Makes this field a group.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">fieldGroupClassName<span class="opt-type">string</span></div>
-        <div class="opt-body"><p>Class on the group's wrapping <code>&lt;div&gt;</code>. Reactive to config changes.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">fieldArray<span class="opt-type">FormlyFieldConfig | ((index: number) =&gt; FormlyFieldConfig)</span></div>
-        <div class="opt-body"><p>Template for each item. As a function it receives the row index, so rows can differ. Makes this field an array.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">hooks<span class="opt-type">{ onInit?, onDestroy? }</span></div>
-        <div class="opt-body"><p>Lifecycle for a mounted field. See <a href="#hooks">Field hooks</a>.</p></div>
-      </div>
-    </div>
+          <h3 id="config-reference">
+            Every option<a
+              class="anchor"
+              href="#config-reference"
+              aria-label="Link to Every option"
+              >#</a
+            >
+          </h3>
+          <div class="opts">
+            <div class="opt">
+              <div class="opt-name">
+                key<span class="opt-type">string | number</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Path segment relative to the parent. Required for leaves and
+                  arrays — omitting it throws with the field's type named.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                type<span class="opt-type">string</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Name of a type registered on the builder. An unknown name
+                  throws, listing what <em>is</em> registered.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                props<span class="opt-type">Record&lt;string, any&gt;</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Everything the type component reads. The
+                  <a href="#built-ins">built-in props</a> also drive validation
+                  rules and the built-in wrapper. Custom props are free-form.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                defaultValue<span class="opt-type">any</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Applied when the model holds no value at this path. See
+                  <a href="#default-value">defaultValue</a>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                className<span class="opt-type">string</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Class for the field's wrapper element. Read by types and
+                  wrappers as <code>ctx.className</code> (a signal), with
+                  <code>expressions["className"]</code> already applied.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                wrappers<span class="opt-type">string[]</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Overrides the type's default wrappers.
+                  <code>wrappers[0]</code> ends up <strong>outermost</strong>.
+                  Fixed at mount — changing it later needs a remount.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                hide<span class="opt-type"
+                  >boolean | Signal | ((ctx) =&gt; boolean) | string</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Hides the field. The value and its registration are
+                  <strong>kept</strong> while hidden, so a hidden field still
+                  validates and still appears in the model — hiding is
+                  presentation, not removal. To drop a field entirely, take it
+                  out of the config.
+                </p>
+                <p>
+                  A bare string here is read as an
+                  <a href="#string-expressions">expression</a>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                expressions<span class="opt-type"
+                  >{ hide?, className?, "props.&lt;name&gt;"? }</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Dynamic overrides evaluated inside computeds. See
+                  <a href="#expressions">Expressions</a>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                validators<span class="opt-type"
+                  >{ validation?: string[]; [name]: fn | entry }</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Registered validators by name, plus inline ones. See
+                  <a href="#validation-layers">Validation</a>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                validation<span class="opt-type"
+                  >{ messages?, mode?, reValidateMode? }</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Per-field message overrides and per-field
+                  <a href="#validation-timing">validation timing</a>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                fieldGroup<span class="opt-type">FormlyFieldConfig[]</span>
+              </div>
+              <div class="opt-body">
+                <p>Nested fields. Makes this field a group.</p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                fieldGroupClassName<span class="opt-type">string</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Class on the group's wrapping <code>&lt;div&gt;</code>.
+                  Reactive to config changes.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                fieldArray<span class="opt-type"
+                  >FormlyFieldConfig | ((index: number) =&gt;
+                  FormlyFieldConfig)</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Template for each item. As a function it receives the row
+                  index, so rows can differ. Makes this field an array.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                hooks<span class="opt-type">{ onInit?, onDestroy? }</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Lifecycle for a mounted field. See
+                  <a href="#hooks">Field hooks</a>.
+                </p>
+              </div>
+            </div>
+          </div>
 
-    <h3 id="default-value">defaultValue<a class="anchor" href="#default-value" aria-label="Link to defaultValue">#</a></h3>
-    <p><code>defaultValue</code> applies when the model has no value at that path — <strong>the model always wins</strong>. It is not just written into the field: it is registered as the control's <em>default</em> for that path, which means the field starts pristine (<code>isDirty === false</code>) and <code>control.reset()</code> restores it rather than clearing it.</p>
-    <p>It works on every kind of field, and on fields that only appear in the config later.</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span></div><pre><code data-lang="ts">defineFields([
+          <h3 id="default-value">
+            defaultValue<a
+              class="anchor"
+              href="#default-value"
+              aria-label="Link to defaultValue"
+              >#</a
+            >
+          </h3>
+          <p>
+            <code>defaultValue</code> applies when the model has no value at
+            that path — <strong>the model always wins</strong>. It is not just
+            written into the field: it is registered as the control's
+            <em>default</em> for that path, which means the field starts
+            pristine (<code>isDirty === false</code>) and
+            <code>control.reset()</code> restores it rather than clearing it.
+          </p>
+          <p>
+            It works on every kind of field, and on fields that only appear in
+            the config later.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">ts</span></div>
+            <pre><code data-lang="ts">defineFields([
   // Leaf: a scalar.
   { key: "role", type: "select", defaultValue: "viewer", props: { options } },
 
@@ -489,56 +1449,176 @@ export function App() {
     defaultValue: [{ number: "" }],
     fieldArray: { fieldGroup: [{ key: "number", type: "input" }] },
   },
-]);</code></pre></div>
-    <div class="note">
-      <span class="note-label">Precedence</span>
-      <p>Model value → outer field's <code>defaultValue</code> → inner field's <code>defaultValue</code>. An outer group that seeds a whole object covers the children inside it; a child whose path the object did not mention still applies its own default.</p>
-      <p>The value is deep-cloned on the way in, so the form can never mutate the config object you passed — and you can never mutate the form's defaults by editing it later. An array field whose <code>defaultValue</code> is not an array throws immediately, naming the path.</p>
-    </div>
-  </section>
+]);</code></pre>
+          </div>
+          <div class="note">
+            <span class="note-label">Precedence</span>
+            <p>
+              Model value → outer field's <code>defaultValue</code> → inner
+              field's <code>defaultValue</code>. An outer group that seeds a
+              whole object covers the children inside it; a child whose path the
+              object did not mention still applies its own default.
+            </p>
+            <p>
+              The value is deep-cloned on the way in, so the form can never
+              mutate the config object you passed — and you can never mutate the
+              form's defaults by editing it later. An array field whose
+              <code>defaultValue</code> is not an array throws immediately,
+              naming the path.
+            </p>
+          </div>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="expressions">
-    <h2>Expressions<a class="anchor" href="#expressions" aria-label="Link to Expressions">#</a></h2>
-    <p>An expression makes part of a field config dynamic. All of them are evaluated inside computeds, so reading the model tracks it — the field updates without anything re-rendering.</p>
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="expressions">
+          <h2>
+            Expressions<a
+              class="anchor"
+              href="#expressions"
+              aria-label="Link to Expressions"
+              >#</a
+            >
+          </h2>
+          <p>
+            An expression makes part of a field config dynamic. All of them are
+            evaluated inside computeds, so reading the model tracks it — the
+            field updates without anything re-rendering.
+          </p>
 
-    <h3 id="expression-forms">Four forms<a class="anchor" href="#expression-forms" aria-label="Link to Four forms">#</a></h3>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span></div><pre><code data-lang="ts">expressions: {
+          <h3 id="expression-forms">
+            Four forms<a
+              class="anchor"
+              href="#expression-forms"
+              aria-label="Link to Four forms"
+              >#</a
+            >
+          </h3>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">ts</span></div>
+            <pre><code data-lang="ts">expressions: {
   "props.label": "Static value",                          // 1. a plain value
   "props.max": someSignal,                                // 2. a signal
   "props.disabled": ({ model }) =&gt; !model.value.country,  // 3. a callback
   "props.hint": { $expr: "model.value.country" },         // 4. a string expression
-}</code></pre></div>
-    <p>A callback receives the expression context:</p>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Member</th><th>Type</th><th>What it is</th></tr></thead>
-      <tbody>
-        <tr><td><code>model</code></td><td><code>ReadonlySignal&lt;Model&gt;</code></td><td>The whole form model.</td></tr>
-        <tr><td><code>formState</code></td><td><code>Signal&lt;…&gt;</code></td><td>The shared scratch state.</td></tr>
-        <tr><td><code>field</code></td><td><code>ReadonlySignal&lt;FormlyFieldConfig&gt;</code></td><td>This field's resolved config.</td></tr>
-        <tr><td><code>control</code></td><td><code>FormControl&lt;Model&gt;</code></td><td>The controller, scoped to this field.</td></tr>
-        <tr><td><code>namePath</code></td><td><code>string</code></td><td>This field's dot-path.</td></tr>
-      </tbody>
-    </table></div>
+}</code></pre>
+          </div>
+          <p>A callback receives the expression context:</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Type</th>
+                  <th>What it is</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>model</code></td>
+                  <td><code>ReadonlySignal&lt;Model&gt;</code></td>
+                  <td>The whole form model.</td>
+                </tr>
+                <tr>
+                  <td><code>formState</code></td>
+                  <td><code>Signal&lt;…&gt;</code></td>
+                  <td>The shared scratch state.</td>
+                </tr>
+                <tr>
+                  <td><code>field</code></td>
+                  <td><code>ReadonlySignal&lt;FormlyFieldConfig&gt;</code></td>
+                  <td>This field's resolved config.</td>
+                </tr>
+                <tr>
+                  <td><code>control</code></td>
+                  <td><code>FormControl&lt;Model&gt;</code></td>
+                  <td>The controller, scoped to this field.</td>
+                </tr>
+                <tr>
+                  <td><code>namePath</code></td>
+                  <td><code>string</code></td>
+                  <td>This field's dot-path.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-    <h3 id="expression-keys">Keys<a class="anchor" href="#expression-keys" aria-label="Link to Keys">#</a></h3>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Key</th><th>Effect</th></tr></thead>
-      <tbody>
-        <tr><td><code>"hide"</code></td><td>Visibility. Takes precedence over the top-level <code>hide</code>. Accepts a bare string.</td></tr>
-        <tr><td><code>"className"</code></td><td>Overrides <code>config.className</code>. Types and wrappers read the result as <code>ctx.className</code>.</td></tr>
-        <tr><td><code>"props.&lt;name&gt;"</code></td><td>Overrides one prop, merged over type defaults and <code>config.props</code>.</td></tr>
-      </tbody>
-    </table></div>
-    <div class="note warn">
-      <span class="note-label">Unknown keys are reported</span>
-      <p>Anything else is a mistake and is reported once through <code>console.error</code>, naming the field — it used to be silently ignored, which made a one-letter typo look like a broken field. The form keeps working; only that key is dropped.</p>
-      <p>TypeScript rejects a wrong <em>prefix</em> (<code>"prop.disabled"</code>) at compile time. A wrong prop <em>name</em> (<code>"props.disbaled"</code>) is only catchable at runtime — which is exactly the case that matters for JSON configs, where there are no types at all.</p>
-    </div>
+          <h3 id="expression-keys">
+            Keys<a
+              class="anchor"
+              href="#expression-keys"
+              aria-label="Link to Keys"
+              >#</a
+            >
+          </h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th>Effect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>"hide"</code></td>
+                  <td>
+                    Visibility. Takes precedence over the top-level
+                    <code>hide</code>. Accepts a bare string.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>"className"</code></td>
+                  <td>
+                    Overrides <code>config.className</code>. Types and wrappers
+                    read the result as <code>ctx.className</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>"props.&lt;name&gt;"</code></td>
+                  <td>
+                    Overrides one prop, merged over type defaults and
+                    <code>config.props</code>.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="note warn">
+            <span class="note-label">Unknown keys are reported</span>
+            <p>
+              Anything else is a mistake and is reported once through
+              <code>console.error</code>, naming the field — it used to be
+              silently ignored, which made a one-letter typo look like a broken
+              field. The form keeps working; only that key is dropped.
+            </p>
+            <p>
+              TypeScript rejects a wrong
+              <em>prefix</em> (<code>"prop.disabled"</code>) at compile time. A
+              wrong prop <em>name</em> (<code>"props.disbaled"</code>) is only
+              catchable at runtime — which is exactly the case that matters for
+              JSON configs, where there are no types at all.
+            </p>
+          </div>
 
-    <h3 id="string-expressions">String expressions<a class="anchor" href="#string-expressions" aria-label="Link to String expressions">#</a></h3>
-    <p>A config that arrives from a backend is JSON, and JSON cannot carry a callback. So an expression may also be written as a string — the entire config below is <code>JSON.parse</code>-able, with no JavaScript in it:</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">json</span></div><pre><code data-lang="json">{
+          <h3 id="string-expressions">
+            String expressions<a
+              class="anchor"
+              href="#string-expressions"
+              aria-label="Link to String expressions"
+              >#</a
+            >
+          </h3>
+          <p>
+            A config that arrives from a backend is JSON, and JSON cannot carry
+            a callback. So an expression may also be written as a string — the
+            entire config below is <code>JSON.parse</code>-able, with no
+            JavaScript in it:
+          </p>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">json</span>
+            </div>
+            <pre><code data-lang="json">{
   "key": "city",
   "type": "input",
   "hide": "!model.value.address.country",
@@ -547,44 +1627,182 @@ export function App() {
     "props.placeholder": { "$expr": "model.value.address.country ? 'Enter a city' : 'Pick a country'" },
     "className": { "$expr": "model.value.compact ? 'row tight' : 'row'" }
   }
-}</code></pre></div>
-    <p><code>hide</code> accepts a <strong>bare string</strong>: its target is a boolean, so a string there could never have been a meaningful static value. Everywhere else the string must be wrapped in <code>{ "$expr": "..." }</code> — otherwise <code>"props.label": "Name"</code> would be parsed as code instead of staying the label it obviously is.</p>
-    <div class="note danger">
-      <span class="note-label">Why there is no eval</span>
-      <p>The string is <strong>parsed and interpreted, never compiled</strong>. This is not primarily a CSP question. A config from a backend is untrusted input, and <code>new Function(configString)</code> would be remote code execution in your user's browser — anyone able to influence that response, or the data behind it, would run arbitrary JavaScript in the user's session.</p>
-      <p>The grammar <em>is</em> the security boundary: there is no AST node for assignment, for <code>new</code>, or for calling an arbitrary function, so no expression can reach <code>window</code>, <code>fetch</code> or <code>constructor</code> regardless of what it contains.</p>
-    </div>
+}</code></pre>
+          </div>
+          <p>
+            <code>hide</code> accepts a <strong>bare string</strong>: its target
+            is a boolean, so a string there could never have been a meaningful
+            static value. Everywhere else the string must be wrapped in
+            <code>{ "$expr": "..." }</code> — otherwise
+            <code>"props.label": "Name"</code> would be parsed as code instead
+            of staying the label it obviously is.
+          </p>
+          <div class="note danger">
+            <span class="note-label">Why there is no eval</span>
+            <p>
+              The string is
+              <strong>parsed and interpreted, never compiled</strong>. This is
+              not primarily a CSP question. A config from a backend is untrusted
+              input, and <code>new Function(configString)</code> would be remote
+              code execution in your user's browser — anyone able to influence
+              that response, or the data behind it, would run arbitrary
+              JavaScript in the user's session.
+            </p>
+            <p>
+              The grammar <em>is</em> the security boundary: there is no AST
+              node for assignment, for <code>new</code>, or for calling an
+              arbitrary function, so no expression can reach
+              <code>window</code>, <code>fetch</code> or
+              <code>constructor</code> regardless of what it contains.
+            </p>
+          </div>
 
-    <h3 id="expression-grammar">Grammar<a class="anchor" href="#expression-grammar" aria-label="Link to Grammar">#</a></h3>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Allowed</th><th>Examples</th></tr></thead>
-      <tbody>
-        <tr><td>Roots</td><td><code>model</code>, <code>formState</code>, <code>field</code>, <code>namePath</code> — and nothing else</td></tr>
-        <tr><td>Member access</td><td><code>model.value.address.country</code>, <code>model.value.items[0].id</code>, <code>?.</code> accepted</td></tr>
-        <tr><td>Literals</td><td><code>'text'</code>, <code>42</code>, <code>true</code>, <code>false</code>, <code>null</code>, <code>undefined</code></td></tr>
-        <tr><td>Operators</td><td><code>!</code> <code>-</code> <code>+</code> <code>*</code> <code>/</code> <code>%</code> <code>===</code> <code>!==</code> <code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code> <code>&amp;&amp;</code> <code>||</code> <code>??</code> <code>a ? b : c</code></td></tr>
-        <tr><td>String methods</td><td><code>includes</code> <code>startsWith</code> <code>endsWith</code> <code>indexOf</code> <code>lastIndexOf</code> <code>slice</code> <code>toLowerCase</code> <code>toUpperCase</code> <code>trim</code> <code>charAt</code> <code>at</code> <code>split</code></td></tr>
-        <tr><td>Array methods</td><td><code>includes</code> <code>indexOf</code> <code>lastIndexOf</code> <code>slice</code> <code>join</code> <code>at</code></td></tr>
-        <tr><td>Number methods</td><td><code>toFixed</code> <code>toString</code></td></tr>
-      </tbody>
-    </table></div>
-    <ul>
-      <li><strong>Member access never throws.</strong> <code>model.value.a.b.c</code> with a missing <code>a</code> yields <code>undefined</code>, because a JSON author cannot be expected to write <code>?.</code> at every step.</li>
-      <li><strong>A malformed expression throws</strong>, quoting the source and the position — that is a broken config, not a runtime state.</li>
-      <li><strong>Methods are matched by identity</strong> against the built-in prototypes, so an object in <em>your own model</em> that happens to have an <code>includes</code> property cannot be invoked through an expression.</li>
-      <li><strong><code>repeat</code>, <code>padStart</code> and <code>padEnd</code> are excluded</strong> on purpose: with an untrusted expression they are a denial-of-service primitive.</li>
-      <li><code>constructor</code>, <code>__proto__</code> and <code>prototype</code> cannot be read at all, including through a computed key.</li>
-      <li>Parsed expressions are cached by source, so a string is parsed once no matter how often it is evaluated.</li>
-    </ul>
-  </section>
+          <h3 id="expression-grammar">
+            Grammar<a
+              class="anchor"
+              href="#expression-grammar"
+              aria-label="Link to Grammar"
+              >#</a
+            >
+          </h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Allowed</th>
+                  <th>Examples</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Roots</td>
+                  <td>
+                    <code>model</code>, <code>formState</code>,
+                    <code>field</code>, <code>namePath</code> — and nothing else
+                  </td>
+                </tr>
+                <tr>
+                  <td>Member access</td>
+                  <td>
+                    <code>model.value.address.country</code>,
+                    <code>model.value.items[0].id</code>,
+                    <code>?.</code> accepted
+                  </td>
+                </tr>
+                <tr>
+                  <td>Literals</td>
+                  <td>
+                    <code>'text'</code>, <code>42</code>, <code>true</code>,
+                    <code>false</code>, <code>null</code>,
+                    <code>undefined</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Operators</td>
+                  <td>
+                    <code>!</code> <code>-</code> <code>+</code> <code>*</code>
+                    <code>/</code> <code>%</code> <code>===</code>
+                    <code>!==</code> <code>==</code> <code>!=</code>
+                    <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code>
+                    <code>&gt;=</code> <code>&amp;&amp;</code> <code>||</code>
+                    <code>??</code> <code>a ? b : c</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>String methods</td>
+                  <td>
+                    <code>includes</code> <code>startsWith</code>
+                    <code>endsWith</code> <code>indexOf</code>
+                    <code>lastIndexOf</code> <code>slice</code>
+                    <code>toLowerCase</code> <code>toUpperCase</code>
+                    <code>trim</code> <code>charAt</code> <code>at</code>
+                    <code>split</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Array methods</td>
+                  <td>
+                    <code>includes</code> <code>indexOf</code>
+                    <code>lastIndexOf</code> <code>slice</code>
+                    <code>join</code> <code>at</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Number methods</td>
+                  <td><code>toFixed</code> <code>toString</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ul>
+            <li>
+              <strong>Member access never throws.</strong>
+              <code>model.value.a.b.c</code> with a missing
+              <code>a</code> yields <code>undefined</code>, because a JSON
+              author cannot be expected to write <code>?.</code> at every step.
+            </li>
+            <li>
+              <strong>A malformed expression throws</strong>, quoting the source
+              and the position — that is a broken config, not a runtime state.
+            </li>
+            <li>
+              <strong>Methods are matched by identity</strong> against the
+              built-in prototypes, so an object in <em>your own model</em> that
+              happens to have an <code>includes</code> property cannot be
+              invoked through an expression.
+            </li>
+            <li>
+              <strong
+                ><code>repeat</code>, <code>padStart</code> and
+                <code>padEnd</code> are excluded</strong
+              >
+              on purpose: with an untrusted expression they are a
+              denial-of-service primitive.
+            </li>
+            <li>
+              <code>constructor</code>, <code>__proto__</code> and
+              <code>prototype</code> cannot be read at all, including through a
+              computed key.
+            </li>
+            <li>
+              Parsed expressions are cached by source, so a string is parsed
+              once no matter how often it is evaluated.
+            </li>
+          </ul>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="validation">
-    <h2>Validation<a class="anchor" href="#validation" aria-label="Link to Validation">#</a></h2>
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="validation">
+          <h2>
+            Validation<a
+              class="anchor"
+              href="#validation"
+              aria-label="Link to Validation"
+              >#</a
+            >
+          </h2>
 
-    <h3 id="validation-layers">Three layers<a class="anchor" href="#validation-layers" aria-label="Link to Three layers">#</a></h3>
-    <p>All three report per field as signals, with resolved human-readable messages.</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span><span class="snippet-note">Rules from props · registered validators · inline validators</span></div><pre><code data-lang="ts">// 1. Built-in rules, expressed as props.
+          <h3 id="validation-layers">
+            Three layers<a
+              class="anchor"
+              href="#validation-layers"
+              aria-label="Link to Three layers"
+              >#</a
+            >
+          </h3>
+          <p>
+            All three report per field as signals, with resolved human-readable
+            messages.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">ts</span
+              ><span class="snippet-note"
+                >Rules from props · registered validators · inline
+                validators</span
+              >
+            </div>
+            <pre><code data-lang="ts">// 1. Built-in rules, expressed as props.
 { key: "age", type: "input", props: { type: "number", required: true, min: 18, max: 120 } }
 { key: "code", type: "input", props: { minLength: 4, maxLength: 8, pattern: /^[A-Z]+$/ } }
 
@@ -603,116 +1821,337 @@ builder.registerValidator("email", (value) =&gt; !value || value.includes("@"), 
       message: "Passwords do not match",
     },
   },
-}</code></pre></div>
-    <p>A validator receives <code>(value, model, fieldConfig, abortSignal?)</code> and returns <code>true</code>/<code>undefined</code> for valid, <code>false</code> for invalid (message resolved from the registry), or a string used directly as the message. Async validators are supported and get an <code>AbortSignal</code> that fires when a newer run supersedes them.</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span><span class="snippet-note">Async, with cancellation</span></div><pre><code data-lang="ts">builder.registerValidator("uniqueSlug", async (value, _model, _field, signal) =&gt; {
+}</code></pre>
+          </div>
+          <p>
+            A validator receives
+            <code>(value, model, fieldConfig, abortSignal?)</code> and returns
+            <code>true</code>/<code>undefined</code> for valid,
+            <code>false</code> for invalid (message resolved from the registry),
+            or a string used directly as the message. Async validators are
+            supported and get an <code>AbortSignal</code> that fires when a
+            newer run supersedes them.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">ts</span
+              ><span class="snippet-note">Async, with cancellation</span>
+            </div>
+            <pre><code data-lang="ts">builder.registerValidator("uniqueSlug", async (value, _model, _field, signal) =&gt; {
   if (!value) return true;
   const res = await fetch(`/api/slug/${value}`, { signal });
   return (await res.json()).free || "That slug is taken";
-});</code></pre></div>
-    <p>Rules are read through getters that peek the current config, so editing <code>props.min</code> through a config replacement takes effect on the next validation run — the field does not need to re-register.</p>
+});</code></pre>
+          </div>
+          <p>
+            Rules are read through getters that peek the current config, so
+            editing <code>props.min</code> through a config replacement takes
+            effect on the next validation run — the field does not need to
+            re-register.
+          </p>
 
-    <h3 id="validation-messages">Messages<a class="anchor" href="#validation-messages" aria-label="Link to Messages">#</a></h3>
-    <p>Precedence, first match wins:</p>
-    <ol>
-      <li>the field's <code>validation.messages[errorType]</code></li>
-      <li>the inline validator entry's own <code>message</code></li>
-      <li>a message registered with <code>registerValidationMessage(errorType, …)</code></li>
-      <li>the default message given to <code>registerValidator</code></li>
-      <li>the string the validator returned</li>
-      <li>the error type itself, as a last resort</li>
-    </ol>
-    <p>Any message may be a function of <code>(error, fieldConfig)</code>:</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span></div><pre><code data-lang="ts">builder.registerValidationMessage("minLength", (_error, field) =&gt;
+          <h3 id="validation-messages">
+            Messages<a
+              class="anchor"
+              href="#validation-messages"
+              aria-label="Link to Messages"
+              >#</a
+            >
+          </h3>
+          <p>Precedence, first match wins:</p>
+          <ol>
+            <li>the field's <code>validation.messages[errorType]</code></li>
+            <li>the inline validator entry's own <code>message</code></li>
+            <li>
+              a message registered with
+              <code>registerValidationMessage(errorType, …)</code>
+            </li>
+            <li>the default message given to <code>registerValidator</code></li>
+            <li>the string the validator returned</li>
+            <li>the error type itself, as a last resort</li>
+          </ol>
+          <p>
+            Any message may be a function of <code>(error, fieldConfig)</code>:
+          </p>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">ts</span></div>
+            <pre><code data-lang="ts">builder.registerValidationMessage("minLength", (_error, field) =&gt;
   `${field.props?.label ?? "This field"} needs at least ${field.props?.minLength} characters`,
 );
 
 // Or for one field only:
-{ key: "pin", type: "input", props: { minLength: 4 }, validation: { messages: { minLength: "4 digits" } } }</code></pre></div>
-    <h4>Defaults shipped</h4>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Error type</th><th>Message</th></tr></thead>
-      <tbody>
-        <tr><td><code>required</code></td><td>This field is required</td></tr>
-        <tr><td><code>min</code> / <code>max</code></td><td>Value must be at least / at most <em>n</em></td></tr>
-        <tr><td><code>minLength</code> / <code>maxLength</code></td><td>Must be at least / at most <em>n</em> characters</td></tr>
-        <tr><td><code>pattern</code></td><td>Invalid format</td></tr>
-      </tbody>
-    </table></div>
+{ key: "pin", type: "input", props: { minLength: 4 }, validation: { messages: { minLength: "4 digits" } } }</code></pre>
+          </div>
+          <h4>Defaults shipped</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Error type</th>
+                  <th>Message</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>required</code></td>
+                  <td>This field is required</td>
+                </tr>
+                <tr>
+                  <td><code>min</code> / <code>max</code></td>
+                  <td>Value must be at least / at most <em>n</em></td>
+                </tr>
+                <tr>
+                  <td><code>minLength</code> / <code>maxLength</code></td>
+                  <td>Must be at least / at most <em>n</em> characters</td>
+                </tr>
+                <tr>
+                  <td><code>pattern</code></td>
+                  <td>Invalid format</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-    <h3 id="validation-timing">When validation runs<a class="anchor" href="#validation-timing" aria-label="Link to When validation runs">#</a></h3>
-    <p><code>mode</code> governs behaviour before the first submit. <code>reValidateMode</code> takes over once the form has been submitted <strong>or</strong> while the field is showing an error — that pairing is what lets a form stay quiet until submit and then turn responsive per keystroke.</p>
-    <div class="table-wrap"><table>
-      <thead><tr><th>mode</th><th>Before the first submit</th></tr></thead>
-      <tbody>
-        <tr><td><code>"all"</code> <em>(default)</em></td><td>On change and on blur.</td></tr>
-        <tr><td><code>"onChange"</code></td><td>On every change.</td></tr>
-        <tr><td><code>"onBlur"</code></td><td>On blur.</td></tr>
-        <tr><td><code>"onTouched"</code></td><td>First on blur, then on every change.</td></tr>
-        <tr><td><code>"onSubmit"</code></td><td>Never — only on submit or an explicit <code>trigger()</code>.</td></tr>
-      </tbody>
-    </table></div>
-    <p><code>reValidateMode</code> is <code>"onChange"</code> (default), <code>"onBlur"</code> or <code>"onSubmit"</code>. With <code>mode: "all"</code> it changes nothing on its own — it only matters once you loosen <code>mode</code>.</p>
-    <div class="note warn">
-      <span class="note-label">This default differs from the base library</span>
-      <p>The base library defaults to <code>"onSubmit"</code>; formly defaults to <code>"all"</code>. A config-driven form is usually a long one, and telling someone at submit time about a field they filled in ten fields ago is the worse default. To get the quiet behaviour back, ask for it: <code>formOptions={{ mode: "onSubmit" }}</code>.</p>
-    </div>
-    <p>Set it for the whole form through <code>formOptions</code>, and override it per field in the config. A field can be both stricter <strong>and</strong> looser than its form:</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">tsx</span></div><pre><code data-lang="tsx">&lt;FormlyForm … formOptions={{ mode: "onBlur", reValidateMode: "onChange" }} /&gt;</code></pre></div>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span></div><pre><code data-lang="ts">defineFields([
+          <h3 id="validation-timing">
+            When validation runs<a
+              class="anchor"
+              href="#validation-timing"
+              aria-label="Link to When validation runs"
+              >#</a
+            >
+          </h3>
+          <p>
+            <code>mode</code> governs behaviour before the first submit.
+            <code>reValidateMode</code> takes over once the form has been
+            submitted <strong>or</strong> while the field is showing an error —
+            that pairing is what lets a form stay quiet until submit and then
+            turn responsive per keystroke.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>mode</th>
+                  <th>Before the first submit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>"all"</code> <em>(default)</em></td>
+                  <td>On change and on blur.</td>
+                </tr>
+                <tr>
+                  <td><code>"onChange"</code></td>
+                  <td>On every change.</td>
+                </tr>
+                <tr>
+                  <td><code>"onBlur"</code></td>
+                  <td>On blur.</td>
+                </tr>
+                <tr>
+                  <td><code>"onTouched"</code></td>
+                  <td>First on blur, then on every change.</td>
+                </tr>
+                <tr>
+                  <td><code>"onSubmit"</code></td>
+                  <td>
+                    Never — only on submit or an explicit
+                    <code>trigger()</code>.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            <code>reValidateMode</code> is <code>"onChange"</code> (default),
+            <code>"onBlur"</code> or <code>"onSubmit"</code>. With
+            <code>mode: "all"</code> it changes nothing on its own — it only
+            matters once you loosen <code>mode</code>.
+          </p>
+          <div class="note warn">
+            <span class="note-label"
+              >This default differs from the base library</span
+            >
+            <p>
+              The base library defaults to <code>"onSubmit"</code>; formly
+              defaults to <code>"all"</code>. A config-driven form is usually a
+              long one, and telling someone at submit time about a field they
+              filled in ten fields ago is the worse default. To get the quiet
+              behaviour back, ask for it:
+              <code>formOptions={{ mode: "onSubmit" }}</code>.
+            </p>
+          </div>
+          <p>
+            Set it for the whole form through <code>formOptions</code>, and
+            override it per field in the config. A field can be both stricter
+            <strong>and</strong> looser than its form:
+          </p>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">tsx</span>
+            </div>
+            <pre><code data-lang="tsx">&lt;FormlyForm … formOptions={{ mode: "onBlur", reValidateMode: "onChange" }} /&gt;</code></pre>
+          </div>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">ts</span></div>
+            <pre><code data-lang="ts">defineFields([
   // Validates on every keystroke, though the form is "onBlur".
   { key: "slug", type: "input", validation: { mode: "onChange" } },
   // Stays quiet until submit, though the form is not.
   { key: "notes", type: "textarea", validation: { mode: "onSubmit" } },
   // Only the re-validation behaviour differs.
   { key: "email", type: "input", validation: { reValidateMode: "onBlur" } },
-]);</code></pre></div>
-    <div class="note">
-      <span class="note-label">How it works</span>
-      <p>The base library decides timing globally, with no per-field hook — so formly takes the decision over. The underlying control is built in a mode where it never auto-validates, and the same rules are re-evaluated per field against that field's effective timing. Both binding paths are covered: <code>register</code>'s <code>onChange</code>/<code>onBlur</code> callbacks (composed with any you pass yourself, never replacing them) and <code>afterChange</code>/<code>afterBlur</code> for <code>Controller</code>/<code>useController</code>.</p>
-      <p>Field timing is resolved at decision time, not captured at mount, so replacing the config changes the mode of a field that is already on screen. Explicit validation — <code>trigger()</code>, <code>handleSubmit()</code>, <code>setValue({ shouldValidate: true })</code> — is unaffected and always runs.</p>
-    </div>
-  </section>
+]);</code></pre>
+          </div>
+          <div class="note">
+            <span class="note-label">How it works</span>
+            <p>
+              The base library decides timing globally, with no per-field hook —
+              so formly takes the decision over. The underlying control is built
+              in a mode where it never auto-validates, and the same rules are
+              re-evaluated per field against that field's effective timing. Both
+              binding paths are covered: <code>register</code>'s
+              <code>onChange</code>/<code>onBlur</code> callbacks (composed with
+              any you pass yourself, never replacing them) and
+              <code>afterChange</code>/<code>afterBlur</code> for
+              <code>Controller</code>/<code>useController</code>.
+            </p>
+            <p>
+              Field timing is resolved at decision time, not captured at mount,
+              so replacing the config changes the mode of a field that is
+              already on screen. Explicit validation — <code>trigger()</code>,
+              <code>handleSubmit()</code>,
+              <code>setValue({ shouldValidate: true })</code> — is unaffected
+              and always runs.
+            </p>
+          </div>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="builder">
-    <h2>Builder API<a class="anchor" href="#builder" aria-label="Link to Builder API">#</a></h2>
-    <p>Every method returns the builder, so registrations chain. <code>build()</code> snapshots them.</p>
-    <div class="opts">
-      <div class="opt">
-        <div class="opt-name">createFormlyFormBuilder<span class="opt-type">(options?: { builtIns?: boolean })</span></div>
-        <div class="opt-body"><p>Creates a builder with the built-in types, the <code>"field"</code> wrapper and the default messages already registered. Pass <code>{ builtIns: false }</code> to start empty.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">registerType<span class="opt-type">(name, component, options?)</span></div>
-        <div class="opt-body"><p>Registers a leaf type. Re-registering a name overrides it — that is how you replace a built-in. Options: <code>wrappers</code> (defaults for this type), <code>defaultProps</code>, and <code>extends</code> (inherit <code>wrappers</code>/<code>defaultProps</code> from another type; the component is <strong>not</strong> inherited). A circular <code>extends</code> chain throws.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">registerArrayType<span class="opt-type">(name, component)</span></div>
-        <div class="opt-body"><p>Registers a type for array fields — it owns the layout and the add/remove controls. See <a href="#array-types">Array types</a>.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">registerWrapper<span class="opt-type">(name, component)</span></div>
-        <div class="opt-body"><p>Registers a wrapper, referenced from <code>wrappers</code> on a type or a field.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">registerValidator<span class="opt-type">(name, fn, defaultMessage?)</span></div>
-        <div class="opt-body"><p>Registers a validator used via <code>validators: { validation: ["name"] }</code>.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">registerValidationMessage<span class="opt-type">(errorType, message)</span></div>
-        <div class="opt-body"><p>Registers a message for an error type, built-in rule types included.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">registerExtension<span class="opt-type">(name, extension)</span></div>
-        <div class="opt-body"><p>Registers a config transform. See <a href="#extensions">Extensions</a>.</p></div>
-      </div>
-      <div class="opt">
-        <div class="opt-name">build<span class="opt-type">&lt;Model&gt;() =&gt; FormlyFormComponent&lt;Model&gt;</span></div>
-        <div class="opt-body"><p>Snapshots the registry and returns the form component. Later registrations never affect it.</p></div>
-      </div>
-    </div>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span></div><pre><code data-lang="ts">const builder = createFormlyFormBuilder()
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="builder">
+          <h2>
+            Builder API<a
+              class="anchor"
+              href="#builder"
+              aria-label="Link to Builder API"
+              >#</a
+            >
+          </h2>
+          <p>
+            Every method returns the builder, so registrations chain.
+            <code>build()</code> snapshots them.
+          </p>
+          <div class="opts">
+            <div class="opt">
+              <div class="opt-name">
+                createFormlyFormBuilder<span class="opt-type"
+                  >(options?: { builtIns?: boolean })</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Creates a builder with the built-in types, the
+                  <code>"field"</code> wrapper and the default messages already
+                  registered. Pass <code>{ builtIns: false }</code> to start
+                  empty.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                registerType<span class="opt-type"
+                  >(name, component, options?)</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Registers a leaf type. Re-registering a name overrides it —
+                  that is how you replace a built-in. Options:
+                  <code>wrappers</code> (defaults for this type),
+                  <code>defaultProps</code>, and <code>extends</code> (inherit
+                  <code>wrappers</code>/<code>defaultProps</code> from another
+                  type; the component is <strong>not</strong> inherited). A
+                  circular <code>extends</code> chain throws.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                registerArrayType<span class="opt-type">(name, component)</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Registers a type for array fields — it owns the layout and the
+                  add/remove controls. See
+                  <a href="#array-types">Array types</a>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                registerWrapper<span class="opt-type">(name, component)</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Registers a wrapper, referenced from <code>wrappers</code> on
+                  a type or a field.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                registerValidator<span class="opt-type"
+                  >(name, fn, defaultMessage?)</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Registers a validator used via
+                  <code>validators: { validation: ["name"] }</code>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                registerValidationMessage<span class="opt-type"
+                  >(errorType, message)</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Registers a message for an error type, built-in rule types
+                  included.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                registerExtension<span class="opt-type">(name, extension)</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  Registers a config transform. See
+                  <a href="#extensions">Extensions</a>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                build<span class="opt-type"
+                  >&lt;Model&gt;() =&gt; FormlyFormComponent&lt;Model&gt;</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Snapshots the registry and returns the form component. Later
+                  registrations never affect it.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">ts</span></div>
+            <pre><code data-lang="ts">const builder = createFormlyFormBuilder()
   .registerType("rating", RatingType, { wrappers: ["field"], defaultProps: { max: 5 } })
   .registerType("stars", StarsType, { extends: "rating" })   // inherits wrappers + defaultProps
   .registerArrayType("phones", PhonesArray)
@@ -721,54 +2160,181 @@ builder.registerValidator("email", (value) =&gt; !value || value.includes("@"), 
   .registerValidationMessage("required", "Don't leave this empty")
   .registerExtension("autoLabel", autoLabelExtension);
 
-const FormlyForm = builder.build&lt;Model&gt;();</code></pre></div>
-  </section>
+const FormlyForm = builder.build&lt;Model&gt;();</code></pre>
+          </div>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="built-ins">
-    <h2>Built-ins<a class="anchor" href="#built-ins" aria-label="Link to Built-ins">#</a></h2>
-    <h4>Types</h4>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Name</th><th>Renders</th><th>Notes</th></tr></thead>
-      <tbody>
-        <tr><td><code>input</code></td><td><code>&lt;input&gt;</code></td><td><code>props.type</code> selects the HTML type. With <code>type: "number"</code> the model receives a <em>number</em>.</td></tr>
-        <tr><td><code>textarea</code></td><td><code>&lt;textarea&gt;</code></td><td></td></tr>
-        <tr><td><code>select</code></td><td><code>&lt;select&gt;</code></td><td>Options from <code>props.options</code>.</td></tr>
-        <tr><td><code>checkbox</code></td><td><code>&lt;input type="checkbox"&gt;</code></td><td>Boolean value; <code>checked</code> is the source of truth.</td></tr>
-        <tr><td><code>radio</code></td><td>a <code>radiogroup</code></td><td>Options from <code>props.options</code>. Non-string option values survive selection.</td></tr>
-      </tbody>
-    </table></div>
-    <p>All of them are exported (<code>InputType</code>, <code>TextareaType</code>, <code>SelectType</code>, <code>CheckboxType</code>, <code>RadioType</code>) so you can compose or re-register them.</p>
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="built-ins">
+          <h2>
+            Built-ins<a
+              class="anchor"
+              href="#built-ins"
+              aria-label="Link to Built-ins"
+              >#</a
+            >
+          </h2>
+          <h4>Types</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Renders</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>input</code></td>
+                  <td><code>&lt;input&gt;</code></td>
+                  <td>
+                    <code>props.type</code> selects the HTML type. With
+                    <code>type: "number"</code> the model receives a
+                    <em>number</em>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>textarea</code></td>
+                  <td><code>&lt;textarea&gt;</code></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td><code>select</code></td>
+                  <td><code>&lt;select&gt;</code></td>
+                  <td>Options from <code>props.options</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>checkbox</code></td>
+                  <td><code>&lt;input type="checkbox"&gt;</code></td>
+                  <td>
+                    Boolean value; <code>checked</code> is the source of truth.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>radio</code></td>
+                  <td>a <code>radiogroup</code></td>
+                  <td>
+                    Options from <code>props.options</code>. Non-string option
+                    values survive selection.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            All of them are exported (<code>InputType</code>,
+            <code>TextareaType</code>, <code>SelectType</code>,
+            <code>CheckboxType</code>, <code>RadioType</code>) so you can
+            compose or re-register them.
+          </p>
 
-    <h4>The <code>props</code> built-in types understand</h4>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Prop</th><th>Effect</th></tr></thead>
-      <tbody>
-        <tr><td><code>label</code>, <code>description</code></td><td>Rendered by the <code>"field"</code> wrapper.</td></tr>
-        <tr><td><code>placeholder</code>, <code>disabled</code>, <code>type</code></td><td>Passed to the element.</td></tr>
-        <tr><td><code>options</code></td><td><code>{ value, label, disabled? }[]</code> for <code>select</code> and <code>radio</code>.</td></tr>
-        <tr><td><code>required</code>, <code>min</code>, <code>max</code>, <code>minLength</code>, <code>maxLength</code>, <code>pattern</code></td><td>Mapped to validation rules. <code>pattern</code> takes a <code>RegExp</code> or a string.</td></tr>
-      </tbody>
-    </table></div>
-    <p>Anything else you put in <code>props</code> is yours — <code>FormlyBaseProps</code> has an index signature.</p>
+          <h4>The <code>props</code> built-in types understand</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Prop</th>
+                  <th>Effect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>label</code>, <code>description</code></td>
+                  <td>Rendered by the <code>"field"</code> wrapper.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>placeholder</code>, <code>disabled</code>,
+                    <code>type</code>
+                  </td>
+                  <td>Passed to the element.</td>
+                </tr>
+                <tr>
+                  <td><code>options</code></td>
+                  <td>
+                    <code>{ value, label, disabled? }[]</code> for
+                    <code>select</code> and <code>radio</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>required</code>, <code>min</code>, <code>max</code>,
+                    <code>minLength</code>, <code>maxLength</code>,
+                    <code>pattern</code>
+                  </td>
+                  <td>
+                    Mapped to validation rules. <code>pattern</code> takes a
+                    <code>RegExp</code> or a string.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Anything else you put in <code>props</code> is yours —
+            <code>FormlyBaseProps</code> has an index signature.
+          </p>
 
-    <h4>The <code>"field"</code> wrapper</h4>
-    <p>The default wrapper for every built-in type. Renders a <code>&lt;div&gt;</code> with <code>ctx.className</code> (falling back to <code>formly-field</code>), a <code>&lt;label for&gt;</code> with a <code>*</code> marker when <code>required</code>, the control, an optional description, and the error message in a <code>role="alert"</code> element with class <code>formly-error</code>. It ships unstyled — the class names are the styling hooks.</p>
-    <div class="note">
-      <span class="note-label">Starting empty</span>
-      <p><code>createFormlyFormBuilder({ builtIns: false })</code> registers nothing. You can also call <code>registerBuiltIns(builder)</code> yourself later, or import <code>defaultValidationMessages</code> and register only the ones you want.</p>
-    </div>
-  </section>
+          <h4>The <code>"field"</code> wrapper</h4>
+          <p>
+            The default wrapper for every built-in type. Renders a
+            <code>&lt;div&gt;</code> with <code>ctx.className</code> (falling
+            back to <code>formly-field</code>), a
+            <code>&lt;label for&gt;</code> with a <code>*</code> marker when
+            <code>required</code>, the control, an optional description, and the
+            error message in a <code>role="alert"</code> element with class
+            <code>formly-error</code>. It ships unstyled — the class names are
+            the styling hooks.
+          </p>
+          <div class="note">
+            <span class="note-label">Starting empty</span>
+            <p>
+              <code>createFormlyFormBuilder({ builtIns: false })</code>
+              registers nothing. You can also call
+              <code>registerBuiltIns(builder)</code> yourself later, or import
+              <code>defaultValidationMessages</code> and register only the ones
+              you want.
+            </p>
+          </div>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="authoring">
-    <h2>Writing a field type<a class="anchor" href="#authoring" aria-label="Link to Writing a field type">#</a></h2>
-    <p>A field type is a Preact component whose props <em>are</em> the field context. <code>createFieldType</code> is an identity helper that exists purely to give you the typing and an optional display name.</p>
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="authoring">
+          <h2>
+            Writing a field type<a
+              class="anchor"
+              href="#authoring"
+              aria-label="Link to Writing a field type"
+              >#</a
+            >
+          </h2>
+          <p>
+            A field type is a Preact component whose props <em>are</em> the
+            field context. <code>createFieldType</code> is an identity helper
+            that exists purely to give you the typing and an optional display
+            name.
+          </p>
 
-    <h3 id="binding">Binding the input<a class="anchor" href="#binding" aria-label="Link to Binding the input">#</a></h3>
-    <p>You receive <code>control</code> and <code>namePath</code> and bind the input yourself, exactly as you would with the base library outside of formly. Two ways:</p>
-    <h4>Uncontrolled — spread <code>register</code></h4>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">tsx</span></div><pre><code data-lang="tsx">import { useComputed } from "@preact/signals";
+          <h3 id="binding">
+            Binding the input<a
+              class="anchor"
+              href="#binding"
+              aria-label="Link to Binding the input"
+              >#</a
+            >
+          </h3>
+          <p>
+            You receive <code>control</code> and <code>namePath</code> and bind
+            the input yourself, exactly as you would with the base library
+            outside of formly. Two ways:
+          </p>
+          <h4>Uncontrolled — spread <code>register</code></h4>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">tsx</span>
+            </div>
+            <pre><code data-lang="tsx">import { useComputed } from "@preact/signals";
 import { createFieldType } from "@dmytromykhailiuk/preact-signal-formly";
 
 const Text = createFieldType&lt;{ placeholder?: string }&gt;(
@@ -782,10 +2348,17 @@ const Text = createFieldType&lt;{ placeholder?: string }&gt;(
     );
   },
   "Text",
-);</code></pre></div>
-    <h4>Controlled — <code>Controller</code> or <code>useController</code></h4>
-    <p>For widgets with no DOM input of their own:</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">tsx</span></div><pre><code data-lang="tsx">import { Controller } from "@dmytromykhailiuk/preact-signal-hook-forms";
+);</code></pre>
+          </div>
+          <h4>
+            Controlled — <code>Controller</code> or <code>useController</code>
+          </h4>
+          <p>For widgets with no DOM input of their own:</p>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">tsx</span>
+            </div>
+            <pre><code data-lang="tsx">import { Controller } from "@dmytromykhailiuk/preact-signal-hook-forms";
 
 const Rating = createFieldType&lt;{ max?: number }&gt;(({ control, namePath, props, id }) =&gt; {
   const max = useComputed(() =&gt; props.value.max ?? 5);
@@ -802,33 +2375,126 @@ const Rating = createFieldType&lt;{ max?: number }&gt;(({ control, namePath, pro
       )}
     /&gt;
   );
-});</code></pre></div>
-    <div class="note">
-      <span class="note-label">The control is scoped to your field</span>
-      <p><code>control.register(namePath)</code> carries the rules derived from the field config — <code>required</code>, <code>pattern</code>, your validators. Options you pass explicitly win over them, and your own <code>onChange</code>/<code>onBlur</code> are composed with the library's, not replaced.</p>
-      <p><code>Controller</code> and <code>useController</code> leave the rules alone, so they work too — and a type that binds <em>nothing at all</em> still validates, because the rules live on the field node from mount.</p>
-    </div>
+});</code></pre>
+          </div>
+          <div class="note">
+            <span class="note-label">The control is scoped to your field</span>
+            <p>
+              <code>control.register(namePath)</code> carries the rules derived
+              from the field config — <code>required</code>,
+              <code>pattern</code>, your validators. Options you pass explicitly
+              win over them, and your own <code>onChange</code>/<code
+                >onBlur</code
+              >
+              are composed with the library's, not replaced.
+            </p>
+            <p>
+              <code>Controller</code> and <code>useController</code> leave the
+              rules alone, so they work too — and a type that binds
+              <em>nothing at all</em> still validates, because the rules live on
+              the field node from mount.
+            </p>
+          </div>
 
-    <h3 id="context">Context reference<a class="anchor" href="#context" aria-label="Link to Context reference">#</a></h3>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Member</th><th>Type</th><th>What it is</th></tr></thead>
-      <tbody>
-        <tr><td><code>control</code></td><td><code>FormControl&lt;Model&gt;</code></td><td>The controller, scoped to this field.</td></tr>
-        <tr><td><code>namePath</code></td><td><code>FieldPath&lt;Model&gt;</code></td><td>Dot-path — the field's <code>name</code>.</td></tr>
-        <tr><td><code>props</code></td><td><code>ReadonlySignal</code></td><td>Type defaults + <code>config.props</code> + <code>props.*</code> expressions.</td></tr>
-        <tr><td><code>className</code></td><td><code>ReadonlySignal&lt;string?&gt;</code></td><td><code>config.className</code> with its expression applied.</td></tr>
-        <tr><td><code>config</code></td><td><code>ReadonlySignal</code></td><td>The resolved config, reactive to edits.</td></tr>
-        <tr><td><code>formState</code></td><td><code>Signal</code></td><td>The shared scratch state.</td></tr>
-        <tr><td><code>id</code></td><td><code>string</code></td><td>Stable DOM id for label association.</td></tr>
-        <tr><td><code>fieldState</code></td><td><code>FieldState</code></td><td>Signals: <code>error</code>, <code>isDirty</code>, <code>isTouched</code>, <code>isValidating</code>, <code>invalid</code>.</td></tr>
-        <tr><td><code>errorMessage</code></td><td><code>ReadonlySignal&lt;string?&gt;</code></td><td>The resolved message for the current error.</td></tr>
-      </tbody>
-    </table></div>
-    <p>Wrappers get all of the above plus <code>children</code>. Array types get all of it plus <code>array</code> and <code>renderItems</code>. Hooks get the base members only — no <code>fieldState</code>, no <code>errorMessage</code>.</p>
+          <h3 id="context">
+            Context reference<a
+              class="anchor"
+              href="#context"
+              aria-label="Link to Context reference"
+              >#</a
+            >
+          </h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Type</th>
+                  <th>What it is</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>control</code></td>
+                  <td><code>FormControl&lt;Model&gt;</code></td>
+                  <td>The controller, scoped to this field.</td>
+                </tr>
+                <tr>
+                  <td><code>namePath</code></td>
+                  <td><code>FieldPath&lt;Model&gt;</code></td>
+                  <td>Dot-path — the field's <code>name</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>props</code></td>
+                  <td><code>ReadonlySignal</code></td>
+                  <td>
+                    Type defaults + <code>config.props</code> +
+                    <code>props.*</code> expressions.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>className</code></td>
+                  <td><code>ReadonlySignal&lt;string?&gt;</code></td>
+                  <td>
+                    <code>config.className</code> with its expression applied.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>config</code></td>
+                  <td><code>ReadonlySignal</code></td>
+                  <td>The resolved config, reactive to edits.</td>
+                </tr>
+                <tr>
+                  <td><code>formState</code></td>
+                  <td><code>Signal</code></td>
+                  <td>The shared scratch state.</td>
+                </tr>
+                <tr>
+                  <td><code>id</code></td>
+                  <td><code>string</code></td>
+                  <td>Stable DOM id for label association.</td>
+                </tr>
+                <tr>
+                  <td><code>fieldState</code></td>
+                  <td><code>FieldState</code></td>
+                  <td>
+                    Signals: <code>error</code>, <code>isDirty</code>,
+                    <code>isTouched</code>, <code>isValidating</code>,
+                    <code>invalid</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>errorMessage</code></td>
+                  <td><code>ReadonlySignal&lt;string?&gt;</code></td>
+                  <td>The resolved message for the current error.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Wrappers get all of the above plus <code>children</code>. Array
+            types get all of it plus <code>array</code> and
+            <code>renderItems</code>. Hooks get the base members only — no
+            <code>fieldState</code>, no <code>errorMessage</code>.
+          </p>
 
-    <h3 id="wrappers">Wrappers<a class="anchor" href="#wrappers" aria-label="Link to Wrappers">#</a></h3>
-    <p>A wrapper decorates a field — label, error, layout. <code>wrappers[0]</code> is the outermost.</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">tsx</span></div><pre><code data-lang="tsx">const Card = createWrapper(({ props, errorMessage, className, children, id }) =&gt; {
+          <h3 id="wrappers">
+            Wrappers<a
+              class="anchor"
+              href="#wrappers"
+              aria-label="Link to Wrappers"
+              >#</a
+            >
+          </h3>
+          <p>
+            A wrapper decorates a field — label, error, layout.
+            <code>wrappers[0]</code> is the outermost.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">tsx</span>
+            </div>
+            <pre><code data-lang="tsx">const Card = createWrapper(({ props, errorMessage, className, children, id }) =&gt; {
   const label = useComputed(() =&gt; props.value.label);
   const cls = useComputed(() =&gt; className.value ?? "card");
   return (
@@ -841,11 +2507,27 @@ const Rating = createFieldType&lt;{ max?: number }&gt;(({ control, namePath, pro
 }, "Card");
 
 builder.registerWrapper("card", Card);
-// then: { key: "email", type: "input", wrappers: ["card"] }</code></pre></div>
+// then: { key: "email", type: "input", wrappers: ["card"] }</code></pre>
+          </div>
 
-    <h3 id="array-types">Array types<a class="anchor" href="#array-types" aria-label="Link to Array types">#</a></h3>
-    <p>An array type owns the layout and the controls for a repeating field. <code>renderItems()</code> renders the rows; <code>array</code> is the stable API from the base library.</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">tsx</span></div><pre><code data-lang="tsx">const PhonesArray = createArrayType&lt;{ number: string }&gt;(({ array, renderItems, props }) =&gt; {
+          <h3 id="array-types">
+            Array types<a
+              class="anchor"
+              href="#array-types"
+              aria-label="Link to Array types"
+              >#</a
+            >
+          </h3>
+          <p>
+            An array type owns the layout and the controls for a repeating
+            field. <code>renderItems()</code> renders the rows;
+            <code>array</code> is the stable API from the base library.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">tsx</span>
+            </div>
+            <pre><code data-lang="tsx">const PhonesArray = createArrayType&lt;{ number: string }&gt;(({ array, renderItems, props }) =&gt; {
   const label = useComputed(() =&gt; props.value.label ?? "Items");
   return (
     &lt;div&gt;
@@ -857,14 +2539,30 @@ builder.registerWrapper("card", Card);
   );
 });
 
-builder.registerArrayType("phones", PhonesArray);</code></pre></div>
-    <p><code>array</code> carries <code>fields</code> (a signal of rows with stable ids), <code>append</code>, <code>prepend</code>, <code>insert</code>, <code>remove</code>, <code>swap</code>, <code>move</code> and <code>replace</code>. Without a registered array type, the rows render bare from the template.</p>
-  </section>
+builder.registerArrayType("phones", PhonesArray);</code></pre>
+          </div>
+          <p>
+            <code>array</code> carries <code>fields</code> (a signal of rows
+            with stable ids), <code>append</code>, <code>prepend</code>,
+            <code>insert</code>, <code>remove</code>, <code>swap</code>,
+            <code>move</code> and <code>replace</code>. Without a registered
+            array type, the rows render bare from the template.
+          </p>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="groups-arrays">
-    <h2>Groups &amp; arrays<a class="anchor" href="#groups-arrays" aria-label="Link to Groups and arrays">#</a></h2>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span></div><pre><code data-lang="ts">defineFields([
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="groups-arrays">
+          <h2>
+            Groups &amp; arrays<a
+              class="anchor"
+              href="#groups-arrays"
+              aria-label="Link to Groups and arrays"
+              >#</a
+            >
+          </h2>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">ts</span></div>
+            <pre><code data-lang="ts">defineFields([
   // Keyed group → paths become address.country, address.city
   {
     key: "address",
@@ -903,15 +2601,36 @@ builder.registerArrayType("phones", PhonesArray);</code></pre></div>
       fieldGroup: [{ key: "name", type: "input", props: { label: `Step ${index + 1}` } }],
     }),
   },
-]);</code></pre></div>
-    <p>Array-level rules attach to the array node itself, so <code>props.required</code> or <code>props.minLength</code> on an array field validates the list rather than an item. Rows remount on every structural change — the base library drops and recreates child nodes on append/remove/move, so a controller must never survive one.</p>
-  </section>
+]);</code></pre>
+          </div>
+          <p>
+            Array-level rules attach to the array node itself, so
+            <code>props.required</code> or <code>props.minLength</code> on an
+            array field validates the list rather than an item. Rows remount on
+            every structural change — the base library drops and recreates child
+            nodes on append/remove/move, so a controller must never survive one.
+          </p>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="hooks">
-    <h2>Field hooks<a class="anchor" href="#hooks" aria-label="Link to Field hooks">#</a></h2>
-    <p><code>onInit</code> runs once after the field mounts and may return a cleanup function. <code>onDestroy</code> runs when the field unmounts — including when it is removed from the config, which is exactly when the config no longer describes it.</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span></div><pre><code data-lang="ts">{
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="hooks">
+          <h2>
+            Field hooks<a
+              class="anchor"
+              href="#hooks"
+              aria-label="Link to Field hooks"
+              >#</a
+            >
+          </h2>
+          <p>
+            <code>onInit</code> runs once after the field mounts and may return
+            a cleanup function. <code>onDestroy</code> runs when the field
+            unmounts — including when it is removed from the config, which is
+            exactly when the config no longer describes it.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">ts</span></div>
+            <pre><code data-lang="ts">{
   key: "country",
   type: "select",
   hooks: {
@@ -924,16 +2643,38 @@ builder.registerArrayType("phones", PhonesArray);</code></pre></div>
     },
     onDestroy: ({ namePath }) =&gt; console.log("gone:", namePath),
   },
-}</code></pre></div>
-    <p>The context is the base field context — <code>control</code>, <code>namePath</code>, <code>props</code>, <code>className</code>, <code>config</code>, <code>formState</code>, <code>id</code>.</p>
-  </section>
+}</code></pre>
+          </div>
+          <p>
+            The context is the base field context — <code>control</code>,
+            <code>namePath</code>, <code>props</code>, <code>className</code>,
+            <code>config</code>, <code>formState</code>, <code>id</code>.
+          </p>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="extensions">
-    <h2>Extensions<a class="anchor" href="#extensions" aria-label="Link to Extensions">#</a></h2>
-    <p>An extension mutates the config draft during resolution — Formly semantics, for cross-cutting conventions you do not want to repeat in every field. The draft is a private clone, so the config object you passed is never touched.</p>
-    <p>Order per field: <code>prePopulate</code> → type defaults merge → <code>onPopulate</code> → <code>postPopulate</code>.</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span></div><pre><code data-lang="ts">const autoLabel = createExtension({
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="extensions">
+          <h2>
+            Extensions<a
+              class="anchor"
+              href="#extensions"
+              aria-label="Link to Extensions"
+              >#</a
+            >
+          </h2>
+          <p>
+            An extension mutates the config draft during resolution — Formly
+            semantics, for cross-cutting conventions you do not want to repeat
+            in every field. The draft is a private clone, so the config object
+            you passed is never touched.
+          </p>
+          <p>
+            Order per field: <code>prePopulate</code> → type defaults merge →
+            <code>onPopulate</code> → <code>postPopulate</code>.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">ts</span></div>
+            <pre><code data-lang="ts">const autoLabel = createExtension({
   prePopulate: (field) =&gt; {
     if (field.key &amp;&amp; !field.props?.label) {
       const key = String(field.key);
@@ -942,15 +2683,34 @@ builder.registerArrayType("phones", PhonesArray);</code></pre></div>
   },
 });
 
-builder.registerExtension("autoLabel", autoLabel);</code></pre></div>
-    <p>Extensions run inside a computed on every resolution, so they must be pure with respect to their input — the same draft in, the same draft out.</p>
-  </section>
+builder.registerExtension("autoLabel", autoLabel);</code></pre>
+          </div>
+          <p>
+            Extensions run inside a computed on every resolution, so they must
+            be pure with respect to their input — the same draft in, the same
+            draft out.
+          </p>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="typescript">
-    <h2>TypeScript<a class="anchor" href="#typescript" aria-label="Link to TypeScript">#</a></h2>
-    <p><code>defineFields</code> narrows <code>props</code> by the registered type name. Pass <code>BuilderTypes&lt;typeof builder&gt;</code> to pick up your own registrations:</p>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">ts</span></div><pre><code data-lang="ts">import { defineFields, type BuilderTypes } from "@dmytromykhailiuk/preact-signal-formly";
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="typescript">
+          <h2>
+            TypeScript<a
+              class="anchor"
+              href="#typescript"
+              aria-label="Link to TypeScript"
+              >#</a
+            >
+          </h2>
+          <p>
+            <code>defineFields</code> narrows <code>props</code> by the
+            registered type name. Pass
+            <code>BuilderTypes&lt;typeof builder&gt;</code> to pick up your own
+            registrations:
+          </p>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">ts</span></div>
+            <pre><code data-lang="ts">import { defineFields, type BuilderTypes } from "@dmytromykhailiuk/preact-signal-formly";
 
 interface RatingProps { max: number; [key: string]: any }
 
@@ -959,15 +2719,37 @@ const builder = createFormlyFormBuilder().registerType&lt;"rating", RatingProps&
 const fields = defineFields&lt;BuilderTypes&lt;typeof builder&gt;&gt;([
   { key: "score", type: "rating", props: { max: 5 } },   // `max` is checked
   { key: "name", type: "input", props: { label: "Name" } },
-]);</code></pre></div>
-    <p>Without a type parameter, <code>defineFields</code> uses the built-in types. Unregistered names and array fields fall back to the loose <code>FormlyFieldConfig</code>, so nothing is ever <em>blocked</em> by the typing — it only narrows what it can.</p>
-    <p>Field types take their own generics: <code>createFieldType&lt;Props, Model&gt;</code>, <code>createArrayType&lt;Item&gt;</code>, <code>createValidator&lt;Value, Model&gt;</code>.</p>
-  </section>
+]);</code></pre>
+          </div>
+          <p>
+            Without a type parameter, <code>defineFields</code> uses the
+            built-in types. Unregistered names and array fields fall back to the
+            loose <code>FormlyFieldConfig</code>, so nothing is ever
+            <em>blocked</em> by the typing — it only narrows what it can.
+          </p>
+          <p>
+            Field types take their own generics:
+            <code>createFieldType&lt;Props, Model&gt;</code>,
+            <code>createArrayType&lt;Item&gt;</code>,
+            <code>createValidator&lt;Value, Model&gt;</code>.
+          </p>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="escape-hatch">
-    <h2>Escape hatches<a class="anchor" href="#escape-hatch" aria-label="Link to Escape hatches">#</a></h2>
-    <div class="snippet"><div class="snippet-head"><span class="snippet-lang">tsx</span></div><pre><code data-lang="tsx">let control: FormControl&lt;Model&gt;;
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="escape-hatch">
+          <h2>
+            Escape hatches<a
+              class="anchor"
+              href="#escape-hatch"
+              aria-label="Link to Escape hatches"
+              >#</a
+            >
+          </h2>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span class="snippet-lang">tsx</span>
+            </div>
+            <pre><code data-lang="tsx">let control: FormControl&lt;Model&gt;;
 
 &lt;FormlyForm … controlRef={(c) =&gt; (control = c)} /&gt;
 
@@ -977,147 +2759,256 @@ control.reset();                               // back to the defaults, pristine
 control.setError("email", { type: "server", message: "Already taken" });
 control.setFocus("email");
 control.formState.isValid.value;               // signals, all of them
-control.formState.dirtyFields.value;</code></pre></div>
-    <p><code>RegistryContext</code> is exported too, for building your own rendering on top of the registry a builder produced.</p>
-  </section>
+control.formState.dirtyFields.value;</code></pre>
+          </div>
+          <p>
+            <code>RegistryContext</code> is exported too, for building your own
+            rendering on top of the registry a builder produced.
+          </p>
+        </section>
 
-  <!-- ─────────────────────────────────────────────────────────── -->
-  <section id="exports">
-    <h2>Exports<a class="anchor" href="#exports" aria-label="Link to Exports">#</a></h2>
-    <h4>Values</h4>
-    <p><code>createFormlyFormBuilder</code> · <code>defineFields</code> · <code>createFieldType</code> · <code>createWrapper</code> · <code>createArrayType</code> · <code>createValidator</code> · <code>createExtension</code> · <code>registerBuiltIns</code> · <code>defaultValidationMessages</code> · <code>InputType</code> · <code>TextareaType</code> · <code>SelectType</code> · <code>CheckboxType</code> · <code>RadioType</code> · <code>FieldWrapper</code> · <code>RegistryContext</code></p>
-    <h4>Types</h4>
-    <p><code>FormlyFieldConfig</code> · <code>FormlyBaseProps</code> · <code>FormlyExpression</code> · <code>FormlyExpressions</code> · <code>FormlyExpressionKey</code> · <code>FormlyExprRef</code> · <code>FormlyExpressionCtx</code> · <code>FormlyFieldContext</code> · <code>FormlyFieldBaseContext</code> · <code>FormlyHookContext</code> · <code>WrapperContext</code> · <code>FieldArrayContext</code> · <code>FieldTypeComponent</code> · <code>WrapperComponent</code> · <code>ArrayTypeComponent</code> · <code>FormlyFormProps</code> · <code>FormlyFormComponent</code> · <code>FormlyFormBuilder</code> · <code>FormlyBuilderOptions</code> · <code>FormlyExtension</code> · <code>FormlyFieldHooks</code> · <code>FormlySelectOption</code> · <code>FormlySharedState</code> · <code>FormlyValidatorFn</code> · <code>FormlyValidatorEntry</code> · <code>FormlyValidatorsConfig</code> · <code>FormlyValidationMessage</code> · <code>TypeRegistrationOptions</code> · <code>BuilderTypes</code> · <code>TypedFieldConfig</code> · <code>BuiltInTypes</code> · <code>FormlyRegistry</code></p>
-    <p>Re-exported from the base library so you can type them without importing it: <code>ValidationMode</code> · <code>ReValidateMode</code> · <code>UseFormOptions</code>.</p>
-  </section>
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="exports">
+          <h2>
+            Exports<a
+              class="anchor"
+              href="#exports"
+              aria-label="Link to Exports"
+              >#</a
+            >
+          </h2>
+          <h4>Values</h4>
+          <p>
+            <code>createFormlyFormBuilder</code> · <code>defineFields</code> ·
+            <code>createFieldType</code> · <code>createWrapper</code> ·
+            <code>createArrayType</code> · <code>createValidator</code> ·
+            <code>createExtension</code> · <code>registerBuiltIns</code> ·
+            <code>defaultValidationMessages</code> · <code>InputType</code> ·
+            <code>TextareaType</code> · <code>SelectType</code> ·
+            <code>CheckboxType</code> · <code>RadioType</code> ·
+            <code>FieldWrapper</code> · <code>RegistryContext</code>
+          </p>
+          <h4>Types</h4>
+          <p>
+            <code>FormlyFieldConfig</code> · <code>FormlyBaseProps</code> ·
+            <code>FormlyExpression</code> · <code>FormlyExpressions</code> ·
+            <code>FormlyExpressionKey</code> · <code>FormlyExprRef</code> ·
+            <code>FormlyExpressionCtx</code> · <code>FormlyFieldContext</code> ·
+            <code>FormlyFieldBaseContext</code> ·
+            <code>FormlyHookContext</code> · <code>WrapperContext</code> ·
+            <code>FieldArrayContext</code> · <code>FieldTypeComponent</code> ·
+            <code>WrapperComponent</code> · <code>ArrayTypeComponent</code> ·
+            <code>FormlyFormProps</code> · <code>FormlyFormComponent</code> ·
+            <code>FormlyFormBuilder</code> · <code>FormlyBuilderOptions</code> ·
+            <code>FormlyExtension</code> · <code>FormlyFieldHooks</code> ·
+            <code>FormlySelectOption</code> · <code>FormlySharedState</code> ·
+            <code>FormlyValidatorFn</code> · <code>FormlyValidatorEntry</code> ·
+            <code>FormlyValidatorsConfig</code> ·
+            <code>FormlyValidationMessage</code> ·
+            <code>TypeRegistrationOptions</code> · <code>BuilderTypes</code> ·
+            <code>TypedFieldConfig</code> · <code>BuiltInTypes</code> ·
+            <code>FormlyRegistry</code>
+          </p>
+          <p>
+            Re-exported from the base library so you can type them without
+            importing it: <code>ValidationMode</code> ·
+            <code>ReValidateMode</code> · <code>UseFormOptions</code>.
+          </p>
+        </section>
 
-  <footer>
-    <p>MIT · <a href="https://github.com/dmytromykhailiuk/preact-signal-formly">github.com/dmytromykhailiuk/preact-signal-formly</a> · Run the live playground with <code>npm run playground</code>.</p>
-  </footer>
-</main>
-</div>
+        <footer>
+          <p>
+            MIT ·
+            <a href="https://github.com/dmytromykhailiuk/preact-signal-formly"
+              >github.com/dmytromykhailiuk/preact-signal-formly</a
+            >
+            · Run the live playground with <code>npm run playground</code>.
+          </p>
+        </footer>
+      </main>
+    </div>
 
-<script>
-(function () {
-  "use strict";
+    <script>
+      (function () {
+        "use strict";
 
-  // Everything here is progressive enhancement: the page is fully readable
-  // without it. Each part is isolated so one failure cannot take the rest down.
-  function attempt(fn) {
-    try { fn(); } catch (err) { if (window.console) console.warn("[docs]", err); }
-  }
-
-  /* ── theme toggle ─────────────────────────────────────────────── */
-  attempt(function () {
-    var root = document.documentElement;
-    var toggle = document.getElementById("theme-toggle");
-    if (!toggle) return;
-
-    function prefersDark() {
-      // matchMedia is missing in some embedded/older engines — treating that
-      // as "light" is harmless, throwing here would kill the whole script.
-      return typeof window.matchMedia === "function" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-    function currentTheme() {
-      return root.getAttribute("data-theme") || (prefersDark() ? "dark" : "light");
-    }
-    function label() {
-      toggle.textContent = currentTheme() === "dark" ? "Light theme" : "Dark theme";
-    }
-    toggle.addEventListener("click", function () {
-      root.setAttribute("data-theme", currentTheme() === "dark" ? "light" : "dark");
-      label();
-    });
-    label();
-  });
-
-  /* ── syntax highlighting ──────────────────────────────────────── */
-  var KEYWORDS = new Set([
-    "const","let","var","function","return","import","export","from","type","interface",
-    "extends","implements","new","class","if","else","for","of","in","await","async",
-    "true","false","null","undefined","as","typeof","default","this","void"
-  ]);
-  var PATTERN = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)/g;
-
-  function esc(s) {
-    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
-
-  function highlight(code, isJson) {
-    var out = "", last = 0, m;
-    PATTERN.lastIndex = 0;
-    while ((m = PATTERN.exec(code)) !== null) {
-      out += esc(code.slice(last, m.index));
-      if (m[1]) {
-        out += '<span class="tok-com">' + esc(m[1]) + "</span>";
-      } else if (m[2]) {
-        // In JSON, a string immediately followed by ':' is a key.
-        var after = code.slice(PATTERN.lastIndex);
-        var isKey = isJson && /^\s*:/.test(after);
-        out += '<span class="' + (isKey ? "tok-key" : "tok-str") + '">' + esc(m[2]) + "</span>";
-      } else if (m[3]) {
-        out += '<span class="tok-num">' + esc(m[3]) + "</span>";
-      } else if (m[4] && KEYWORDS.has(m[4])) {
-        out += '<span class="tok-kw">' + esc(m[4]) + "</span>";
-      } else {
-        out += esc(m[0]);
-      }
-      last = PATTERN.lastIndex;
-    }
-    return out + esc(code.slice(last));
-  }
-
-  attempt(function () {
-    Array.prototype.forEach.call(document.querySelectorAll("code[data-lang]"), function (block) {
-      var lang = block.getAttribute("data-lang");
-      if (lang === "sh") return;
-      block.innerHTML = highlight(block.textContent, lang === "json");
-    });
-  });
-
-  /* ── table-of-contents scroll spy ─────────────────────────────── */
-  attempt(function () {
-    if (!("IntersectionObserver" in window)) return;
-
-    var byId = {};
-    var targets = [];
-    Array.prototype.forEach.call(document.querySelectorAll("nav.toc a"), function (link) {
-      var id = link.getAttribute("href").slice(1);
-      var el = document.getElementById(id);
-      if (!el) return;
-      byId[id] = link;
-      targets.push(el);
-    });
-    if (!targets.length) return;
-
-    var active = null;
-    function setActive(id) {
-      if (id === active) return;
-      if (active && byId[active]) byId[active].classList.remove("is-active");
-      active = id;
-      if (byId[id]) byId[id].classList.add("is-active");
-    }
-
-    var visible = {};
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          visible[entry.target.id] = entry.isIntersecting;
-        });
-        // Highlight the first section, in document order, that is on screen.
-        for (var i = 0; i < targets.length; i++) {
-          if (visible[targets[i].id]) {
-            setActive(targets[i].id);
-            return;
+        // Everything here is progressive enhancement: the page is fully readable
+        // without it. Each part is isolated so one failure cannot take the rest down.
+        function attempt(fn) {
+          try {
+            fn();
+          } catch (err) {
+            if (window.console) console.warn("[docs]", err);
           }
         }
-      },
-      { rootMargin: "0px 0px -70% 0px", threshold: 0 }
-    );
-    targets.forEach(function (el) { observer.observe(el); });
-  });
-})();
-</script>
-</body>
+
+        /* ── theme toggle ─────────────────────────────────────────────── */
+        attempt(function () {
+          var root = document.documentElement;
+          var toggle = document.getElementById("theme-toggle");
+          if (!toggle) return;
+
+          function prefersDark() {
+            // matchMedia is missing in some embedded/older engines — treating that
+            // as "light" is harmless, throwing here would kill the whole script.
+            return (
+              typeof window.matchMedia === "function" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches
+            );
+          }
+          function currentTheme() {
+            return (
+              root.getAttribute("data-theme") ||
+              (prefersDark() ? "dark" : "light")
+            );
+          }
+          function label() {
+            toggle.textContent =
+              currentTheme() === "dark" ? "Light theme" : "Dark theme";
+          }
+          toggle.addEventListener("click", function () {
+            root.setAttribute(
+              "data-theme",
+              currentTheme() === "dark" ? "light" : "dark"
+            );
+            label();
+          });
+          label();
+        });
+
+        /* ── syntax highlighting ──────────────────────────────────────── */
+        var KEYWORDS = new Set([
+          "const",
+          "let",
+          "var",
+          "function",
+          "return",
+          "import",
+          "export",
+          "from",
+          "type",
+          "interface",
+          "extends",
+          "implements",
+          "new",
+          "class",
+          "if",
+          "else",
+          "for",
+          "of",
+          "in",
+          "await",
+          "async",
+          "true",
+          "false",
+          "null",
+          "undefined",
+          "as",
+          "typeof",
+          "default",
+          "this",
+          "void",
+        ]);
+        var PATTERN =
+          /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)/g;
+
+        function esc(s) {
+          return s
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function highlight(code, isJson) {
+          var out = "",
+            last = 0,
+            m;
+          PATTERN.lastIndex = 0;
+          while ((m = PATTERN.exec(code)) !== null) {
+            out += esc(code.slice(last, m.index));
+            if (m[1]) {
+              out += '<span class="tok-com">' + esc(m[1]) + "</span>";
+            } else if (m[2]) {
+              // In JSON, a string immediately followed by ':' is a key.
+              var after = code.slice(PATTERN.lastIndex);
+              var isKey = isJson && /^\s*:/.test(after);
+              out +=
+                '<span class="' +
+                (isKey ? "tok-key" : "tok-str") +
+                '">' +
+                esc(m[2]) +
+                "</span>";
+            } else if (m[3]) {
+              out += '<span class="tok-num">' + esc(m[3]) + "</span>";
+            } else if (m[4] && KEYWORDS.has(m[4])) {
+              out += '<span class="tok-kw">' + esc(m[4]) + "</span>";
+            } else {
+              out += esc(m[0]);
+            }
+            last = PATTERN.lastIndex;
+          }
+          return out + esc(code.slice(last));
+        }
+
+        attempt(function () {
+          Array.prototype.forEach.call(
+            document.querySelectorAll("code[data-lang]"),
+            function (block) {
+              var lang = block.getAttribute("data-lang");
+              if (lang === "sh") return;
+              block.innerHTML = highlight(block.textContent, lang === "json");
+            }
+          );
+        });
+
+        /* ── table-of-contents scroll spy ─────────────────────────────── */
+        attempt(function () {
+          if (!("IntersectionObserver" in window)) return;
+
+          var byId = {};
+          var targets = [];
+          Array.prototype.forEach.call(
+            document.querySelectorAll("nav.toc a"),
+            function (link) {
+              var id = link.getAttribute("href").slice(1);
+              var el = document.getElementById(id);
+              if (!el) return;
+              byId[id] = link;
+              targets.push(el);
+            }
+          );
+          if (!targets.length) return;
+
+          var active = null;
+          function setActive(id) {
+            if (id === active) return;
+            if (active && byId[active])
+              byId[active].classList.remove("is-active");
+            active = id;
+            if (byId[id]) byId[id].classList.add("is-active");
+          }
+
+          var visible = {};
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                visible[entry.target.id] = entry.isIntersecting;
+              });
+              // Highlight the first section, in document order, that is on screen.
+              for (var i = 0; i < targets.length; i++) {
+                if (visible[targets[i].id]) {
+                  setActive(targets[i].id);
+                  return;
+                }
+              }
+            },
+            { rootMargin: "0px 0px -70% 0px", threshold: 0 }
+          );
+          targets.forEach(function (el) {
+            observer.observe(el);
+          });
+        });
+      })();
+    </script>
+  </body>
 </html>
