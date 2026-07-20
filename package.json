@@ -1,6 +1,6 @@
 {
   "name": "@dmytromykhailiuk/preact-signal-formly",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Dynamic, config-driven forms for Preact — a Formly analogue built entirely on @preact/signals and preact-signal-hook-forms. Signal-first, zero re-render.",
   "type": "module",
   "sideEffects": false,
@@ -24,7 +24,10 @@
     "typescript",
     "typed"
   ],
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
