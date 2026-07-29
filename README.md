@@ -185,6 +185,9 @@ const builder = createFormlyFormBuilder({ builtIns: true })
   .registerType(name, component, { wrappers, defaultProps, extends })
   .registerArrayType(name, component)
   .registerWrapper(name, component)
+  .registerLazyType(name, loader, { wrappers, defaultProps, extends, errorFallback })
+  .registerLazyArrayType(name, loader, { errorFallback })
+  .registerLazyWrapper(name, loader, { errorFallback })
   .registerValidator(name, fn, defaultMessage?)
   .registerValidationMessage(errorType, message)
   .registerExtension(name, { prePopulate, onPopulate, postPopulate });
@@ -204,6 +207,76 @@ const FormlyForm = builder.build<Model>();
   clone, so the config object you passed is never touched.
 - `hooks.onInit` runs once after a field mounts and may return a cleanup function;
   `hooks.onDestroy` runs on unmount, including when the field is removed from the config.
+- The `registerLazy*` methods take a loader instead of a component — see below.
+
+## Lazy types & wrappers
+
+A registry usually outlives any single form: a rich text editor, a date picker, a map picker
+are all registered up front, and most forms use none of them. The `registerLazy*` methods take
+a **loader** — a function returning a dynamic `import()` — so the component travels in its own
+chunk, fetched only when a field that uses it first renders.
+
+```tsx
+const builder = createFormlyFormBuilder()
+  .registerLazyType("rating", () => import("./types/Rating"), {
+    wrappers: ["field"],
+    defaultProps: { max: 5 },
+  })
+  .registerLazyArrayType("phones", () => import("./types/PhonesArray"))
+  .registerLazyWrapper("card", () => import("./wrappers/Card"));
+```
+
+Everything else is unchanged: the name is used in configs exactly as an eagerly registered one
+(`{ key: "score", type: "rating" }`), and re-registering a name still overrides it — including
+replacing an eager registration with a lazy one, or a built-in with a lazy override.
+
+**The loader** may resolve to the component itself or to a module whose `default` export is the
+component, so `() => import("./Rating")` works as is. For a named export, map it in the loader:
+
+```ts
+.registerLazyType("stars", () => import("./types/Stars").then((m) => m.StarsType))
+```
+
+It is called **at most once per registration**, however many fields, array rows or built forms
+use the name — the result is memoised and shared.
+
+**While the chunk is in flight, the slot renders nothing.** There is no fallback or spinner:
+the field itself is already live. Its `defaultValue` is seeded and its validation rules are
+attached when the *field* mounts, not when the component arrives, so the model is correct and
+the form validates while the import is still on the wire.
+
+**Registration options are eager — only the component is lazy.** `wrappers`, `defaultProps` and
+`extends` are plain data read while the config resolves, so they behave exactly as on
+`registerType`. One visible consequence: a lazy type's wrappers render immediately, so the
+built-in `"field"` wrapper shows its label and error message around the still-empty slot.
+
+A lazy **wrapper** owns its children, so a field wrapped in a wrapper that is still loading
+renders nothing until it lands. Wrappers nest as always — `wrappers[0]` stays outermost whether
+the wrappers are eager, lazy or a mix.
+
+**If a chunk fails to load** — a network blip, a stale hashed filename after a deploy — the form
+does not crash. The failure is reported through `console.error`, the optional `errorFallback`
+renders in the slot (without it the slot just stays empty), and the import is **retried the next
+time a field using that name mounts**:
+
+```tsx
+.registerLazyWrapper("card", () => import("./wrappers/Card"), {
+  errorFallback: (error) => <p class="load-error">Could not load this field: {String(error)}</p>,
+})
+```
+
+**Zero re-render still holds.** A chunk arriving is a signal flip consumed by `<Show>` — not
+component state, not `Suspense`. The loaded component mounts once and never re-renders, and
+nothing around it re-renders either: not the form, not the field, not its wrappers, not the
+sibling fields.
+
+**Typing.** `registerLazyType` widens the builder's type map just like `registerType`, so
+`defineFields<BuilderTypes<typeof builder>>` keeps narrowing `props` by type name. Where props
+cannot be inferred through the loader's promise, name them:
+
+```ts
+.registerLazyType<"rating", RatingProps>("rating", () => import("./types/Rating"))
+```
 
 ## Writing a custom type
 

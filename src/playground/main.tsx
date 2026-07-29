@@ -109,17 +109,34 @@ const PhonesArray = createArrayType<{ number: string }>(
  * Builder
  * ------------------------------------------------------------------ */
 
+/**
+ * Slow the imports down so the empty slot is actually visible — a real loader
+ * is just `() => import("./lazy-color")`.
+ */
+function slow<T>(load: () => Promise<T>): () => Promise<T> {
+  return () => new Promise<void>((resolve) => setTimeout(resolve, 1200)).then(load);
+}
+
 const builder = createFormlyFormBuilder()
   .registerType("rating", RatingType)
   .registerWrapper("highlight", HighlightWrapper)
   .registerValidator("email", emailValidator, "Please enter a valid email")
-  .registerArrayType("phones", PhonesArray);
+  .registerArrayType("phones", PhonesArray)
+  // Code-split: the chunk is fetched when a field using the name first renders.
+  // The eager `"field"` wrapper draws the label right away, around the still
+  // empty slot; the lazy wrapper below owns its children, so the field inside
+  // it appears only once the wrapper itself lands.
+  .registerLazyType("color", slow(() => import("./lazy-color")), {
+    wrappers: ["field"],
+  })
+  .registerLazyWrapper("card", slow(() => import("./lazy-card")));
 
 interface Model {
   accountType: string;
   email: string;
   company: string;
   score: number;
+  favoriteColor: string;
   address: { country: string; city: string };
   phones: Array<{ number: string }>;
   bio: string;
@@ -136,6 +153,7 @@ const model = signal<Model>({
   email: "",
   company: "",
   score: 3,
+  favoriteColor: "",
   address: { country: "", city: "" },
   phones: [{ number: "" }],
   bio: "",
@@ -174,6 +192,13 @@ const config = signal(
       type: "rating",
       props: { label: "Rate us", max: 5 },
       wrappers: ["highlight"],
+    },
+    {
+      key: "favoriteColor",
+      type: "color",
+      // Lazy type, eager wrapper: the label is on screen immediately, the
+      // swatches arrive with the chunk.
+      props: { label: "Favourite colour (lazy type)" },
     },
     {
       key: "address",
@@ -228,7 +253,9 @@ const config = signal(
         {
           key: "bio",
           type: "textarea",
-          props: { label: "Bio", placeholder: "A few words…" },
+          // Lazy wrapper: it owns its children, so the textarea appears with it.
+          wrappers: ["card"],
+          props: { label: "Bio (lazy wrapper)", placeholder: "A few words…" },
         },
       ],
     },

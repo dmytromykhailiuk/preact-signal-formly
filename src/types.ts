@@ -345,6 +345,44 @@ export interface TypeRegistrationOptions<Props extends Record<string, any> = For
 }
 
 /* ------------------------------------------------------------------ *
+ * Lazy registration
+ * ------------------------------------------------------------------ */
+
+/**
+ * What a loader may resolve to: the component itself, or a module with the
+ * component as its `default` export — so `() => import("./Rating")` works as
+ * is. A named export is picked in the loader:
+ * `() => import("./Rating").then((m) => m.RatingType)`.
+ */
+export type LazyComponentModule<C> = C | { default: C };
+
+/**
+ * Loads a code-split component. Called at most once per registration (the
+ * result is memoised and shared by every field using the name), and only when
+ * a field that uses it first renders.
+ */
+export type LazyComponentLoader<C> = () => Promise<LazyComponentModule<C>>;
+
+/** Options shared by `registerLazyType`, `registerLazyArrayType` and `registerLazyWrapper`. */
+export interface LazyRegistrationOptions {
+  /**
+   * Rendered when the loader rejects (or resolves to a module with no
+   * component). Without it the slot stays empty. Either way the failure is
+   * reported through `console.error` and the import is retried the next time a
+   * field using the name mounts — a failed chunk never takes the form down.
+   */
+  errorFallback?: (error: unknown) => VNode | null;
+}
+
+/**
+ * Options of `registerLazyType`. The `wrappers`/`defaultProps`/`extends` half
+ * is **eager** — it is plain data, read synchronously while the config is
+ * resolved, long before the component arrives. Only the component is lazy.
+ */
+export type LazyTypeRegistrationOptions<Props extends Record<string, any> = FormlyBaseProps> =
+  TypeRegistrationOptions<Props> & LazyRegistrationOptions;
+
+/* ------------------------------------------------------------------ *
  * FormlyForm component contract
  * ------------------------------------------------------------------ */
 

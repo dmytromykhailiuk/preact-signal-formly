@@ -876,7 +876,7 @@
       <div class="rail" id="site-rail">
         <div class="brand">
           <span class="brand-mark">preact-signal-formly</span>
-          <span class="brand-ver">0.1.2</span>
+          <span class="brand-ver">1.0.0</span>
         </div>
         <p class="brand-sub">
           Config-driven forms for Preact. Signal-first, zero re-render.
@@ -923,6 +923,7 @@
                 </ol>
               </li>
               <li><a href="#builder">Builder API</a></li>
+              <li><a href="#lazy">Lazy types &amp; wrappers</a></li>
               <li><a href="#built-ins">Built-ins</a></li>
               <li>
                 <a href="#authoring">Writing a field type</a>
@@ -2275,6 +2276,55 @@ builder.registerValidator("email", (value) =&gt; !value || value.includes("@"), 
             </div>
             <div class="opt">
               <div class="opt-name">
+                registerLazyType<span class="opt-type"
+                  >(name, loader, options?)</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  Registers a leaf type whose component is code-split: the
+                  loader is a function returning a dynamic
+                  <code>import()</code>, called when a field of this type first
+                  renders and at most once per registration. Takes the same
+                  <code>wrappers</code>/<code>defaultProps</code>/<code
+                    >extends</code
+                  >
+                  options as <code>registerType</code> — they are eager — plus
+                  <code>errorFallback</code>. See
+                  <a href="#lazy">Lazy types &amp; wrappers</a>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                registerLazyArrayType<span class="opt-type"
+                  >(name, loader, options?)</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  The code-split counterpart of
+                  <code>registerArrayType</code>. Items render once the chunk
+                  lands. Options: <code>errorFallback</code>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                registerLazyWrapper<span class="opt-type"
+                  >(name, loader, options?)</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  The code-split counterpart of <code>registerWrapper</code>. A
+                  wrapper owns its children, so the wrapped field renders once
+                  the wrapper lands. Options: <code>errorFallback</code>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
                 registerValidator<span class="opt-type"
                   >(name, fn, defaultMessage?)</span
                 >
@@ -2331,11 +2381,172 @@ builder.registerValidator("email", (value) =&gt; !value || value.includes("@"), 
   .registerType("stars", StarsType, { extends: "rating" })   // inherits wrappers + defaultProps
   .registerArrayType("phones", PhonesArray)
   .registerWrapper("highlight", HighlightWrapper)
+  .registerLazyType("editor", () =&gt; import("./types/Editor"), { wrappers: ["field"] })
+  .registerLazyArrayType("gallery", () =&gt; import("./types/Gallery"))
+  .registerLazyWrapper("card", () =&gt; import("./wrappers/Card"))
   .registerValidator("email", emailValidator, "Please enter a valid email")
   .registerValidationMessage("required", "Don't leave this empty")
   .registerExtension("autoLabel", autoLabelExtension);
 
 const FormlyForm = builder.build&lt;Model&gt;();</code></pre>
+          </div>
+        </section>
+
+        <!-- ─────────────────────────────────────────────────────────── -->
+        <section id="lazy">
+          <h2>
+            Lazy types &amp; wrappers<a
+              class="anchor"
+              href="#lazy"
+              aria-label="Link to Lazy types and wrappers"
+              >#</a
+            >
+          </h2>
+          <p>
+            A registry usually outlives any single form: a rich text editor, a
+            date picker, a map picker are all registered up front, and most
+            forms use none of them.
+            <code>registerLazyType</code>,
+            <code>registerLazyArrayType</code> and
+            <code>registerLazyWrapper</code> take a <strong>loader</strong> — a
+            function returning a dynamic <code>import()</code> — so the
+            component travels in its own chunk, fetched only when a field that
+            uses it first renders.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">tsx</span></div>
+            <pre><code data-lang="tsx">const builder = createFormlyFormBuilder()
+  .registerLazyType("rating", () =&gt; import("./types/Rating"), {
+    wrappers: ["field"],
+    defaultProps: { max: 5 },
+  })
+  .registerLazyArrayType("phones", () =&gt; import("./types/PhonesArray"))
+  .registerLazyWrapper("card", () =&gt; import("./wrappers/Card"));
+
+// Used in a config exactly like an eagerly registered name:
+const fields = [{ key: "score", type: "rating" }];</code></pre>
+          </div>
+          <div class="opts">
+            <div class="opt">
+              <div class="opt-name">
+                The loader<span class="opt-type"
+                  >() =&gt; Promise&lt;Component | { default: Component }&gt;</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  May resolve to the component itself or to a module whose
+                  <code>default</code> export is the component, so
+                  <code>() =&gt; import("./Rating")</code> works as is. For a
+                  named export, map it in the loader:
+                  <code
+                    >() =&gt; import("./Stars").then((m) =&gt; m.StarsType)</code
+                  >. It is called <strong>at most once per registration</strong>,
+                  however many fields, array rows or built forms use the name —
+                  the result is memoised and shared.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                While the chunk is in flight<span class="opt-type"
+                  >nothing renders</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  There is no fallback or spinner — the field itself is already
+                  live. Its <code>defaultValue</code> is seeded and its
+                  validation rules are attached when the <em>field</em> mounts,
+                  not when the component arrives, so the model is correct and
+                  the form validates while the import is still on the wire.
+                  <code>hooks.onInit</code> fires at field mount too.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                Registration options<span class="opt-type"
+                  >eager — only the component is lazy</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  <code>wrappers</code>, <code>defaultProps</code> and
+                  <code>extends</code> are plain data read while the config
+                  resolves, so they behave exactly as on
+                  <code>registerType</code>. One visible consequence: a lazy
+                  type's wrappers render immediately, so the built-in
+                  <code>"field"</code> wrapper shows its label and error message
+                  around the still-empty slot. A lazy
+                  <strong>wrapper</strong> owns its children, so a field wrapped
+                  in one renders nothing until it lands; nesting order
+                  (<code>wrappers[0]</code> outermost) holds for eager, lazy and
+                  mixed chains alike.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                errorFallback<span class="opt-type"
+                  >(error) =&gt; VNode | null</span
+                >
+              </div>
+              <div class="opt-body">
+                <p>
+                  If a chunk fails to load — a network blip, a stale hashed
+                  filename after a deploy — the form does not crash. The failure
+                  is reported through <code>console.error</code>,
+                  <code>errorFallback</code> renders in the slot (without it the
+                  slot stays empty), and the import is
+                  <strong>retried the next time a field using that name
+                    mounts</strong>.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                Zero re-render<span class="opt-type">still holds</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  A chunk arriving is a signal flip consumed by
+                  <code>&lt;Show&gt;</code> — not component state, not
+                  <code>Suspense</code>. The loaded component mounts once and
+                  never re-renders, and nothing around it re-renders either: not
+                  the form, not the field, not its wrappers, not the sibling
+                  fields.
+                </p>
+              </div>
+            </div>
+            <div class="opt">
+              <div class="opt-name">
+                Typing<span class="opt-type">same type map as registerType</span>
+              </div>
+              <div class="opt-body">
+                <p>
+                  <code>registerLazyType</code> widens the builder's type map
+                  just like <code>registerType</code>, so
+                  <code>defineFields&lt;BuilderTypes&lt;typeof
+                    builder&gt;&gt;</code
+                  >
+                  keeps narrowing <code>props</code> by type name. Where props
+                  cannot be inferred through the loader's promise, name them:
+                  <code
+                    >registerLazyType&lt;"rating",
+                    RatingProps&gt;("rating", loader)</code
+                  >.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="snippet">
+            <div class="snippet-head"><span class="snippet-lang">tsx</span></div>
+            <pre><code data-lang="tsx">builder.registerLazyWrapper("card", () =&gt; import("./wrappers/Card"), {
+  errorFallback: (error) =&gt; (
+    &lt;p class="load-error"&gt;Could not load this field: {String(error)}&lt;/p&gt;
+  ),
+});</code></pre>
           </div>
         </section>
 
@@ -2980,9 +3191,12 @@ control.formState.dirtyFields.value;</code></pre>
             <code>FormlyValidatorFn</code> · <code>FormlyValidatorEntry</code> ·
             <code>FormlyValidatorsConfig</code> ·
             <code>FormlyValidationMessage</code> ·
-            <code>TypeRegistrationOptions</code> · <code>BuilderTypes</code> ·
-            <code>TypedFieldConfig</code> · <code>BuiltInTypes</code> ·
-            <code>FormlyRegistry</code>
+            <code>TypeRegistrationOptions</code> ·
+            <code>LazyTypeRegistrationOptions</code> ·
+            <code>LazyRegistrationOptions</code> ·
+            <code>LazyComponentLoader</code> · <code>LazyComponentModule</code> ·
+            <code>BuilderTypes</code> · <code>TypedFieldConfig</code> ·
+            <code>BuiltInTypes</code> · <code>FormlyRegistry</code>
           </p>
           <p>
             Re-exported from the base library so you can type them without
